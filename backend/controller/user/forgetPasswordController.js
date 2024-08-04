@@ -32,7 +32,7 @@ const forgetPasswordController = async (req, res) => {
 
     await user.save();
 
-    const appBaseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const appBaseUrl = process.env.FRONTEND_URL;
 
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
