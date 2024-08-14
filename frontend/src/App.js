@@ -2,7 +2,7 @@ import './App.css';
 import { Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
 import SummaryApi from './common';
@@ -10,6 +10,7 @@ import Context from './context';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from './store/userSlice';
 import MobileView from './pages/MobileView';
+import { useMemo } from 'react';
 
 function App() {
   const dispatch = useDispatch();
@@ -27,11 +28,12 @@ function App() {
       const dataApi = await dataResponse.json();
       if (dataApi.success) {
         dispatch(setUserDetails(dataApi.data));
+      } else {
+        toast.error('Failed to fetch user details.');
       }
-
-      console.log("User details:", dataApi);
     } catch (error) {
       console.error('Error fetching user details:', error);
+      toast.error('Error fetching user details.');
     }
   };
 
@@ -46,12 +48,13 @@ function App() {
       }
       const dataApi = await dataResponse.json();
       if (dataApi.success && dataApi.data) {
-        setCartProductCount(dataApi?.data?.count);
+        setCartProductCount(dataApi.data.count);
+      } else {
+        toast.error('Failed to fetch cart count.');
       }
-
-      console.log("Cart data:", dataApi);
     } catch (error) {
       console.error('Error fetching cart count:', error);
+      toast.error('Error fetching cart count.');
     }
   };
 
@@ -60,13 +63,15 @@ function App() {
     fetchUserAddToCart();
   }, []);
 
+  const contextValue = useMemo(() => ({
+    fetchUserDetails, 
+    cartProductCount,
+    fetchUserAddToCart
+  }), [cartProductCount]);
+
   return (
     <>
-      <Context.Provider value={{
-        fetchUserDetails, 
-        cartProductCount,
-        fetchUserAddToCart
-      }}>
+      <Context.Provider value={contextValue}>
         <ToastContainer />
         <Header />
         <main className='min-h-[calc(100vh-130px)]'>

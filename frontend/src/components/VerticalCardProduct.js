@@ -43,7 +43,7 @@ const VerticalCardProduct = ({ category, heading }) => {
         <div className="container mx-auto px-7 my-6 relative">
             <h2 className="text-2xl font-semibold py-6">{heading}</h2>
 
-            <div className="flex items-center gap-2 md:gap-6 overflow-scroll h-full scrollbar-none transition-all" ref={scrollElement}>
+            <div className="flex items-center  md:gap-6 overflow-scroll max-h-[90%] scrollbar-none transition-all" ref={scrollElement}>
             <button className='bg-white shadow-md rounded-full text-2xl ml-4  hidden md:block absolute left-0' onClick={scrollLeft}>
                     <FaAngleLeft />
                 </button>
@@ -58,9 +58,9 @@ const VerticalCardProduct = ({ category, heading }) => {
                       ))
                     : data.map((product, index) => {
                         return (
-                            <Link to={"product/"+product?._id} key={index} className="w-full min-w-[230px] md:min-w-[320px] max-w-[230px]  md:max-w-[320px] h-full bg-white rounded-sm shadow-md">
-                                <div className="bg-white h-64 p-4 min-w-[120px] md:min-w-[145px] flex items-center justify-center ">
-                                    <img src={product.productImage[0]} className="object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply" alt={product.name} />
+                            <Link to={"product/"+product?._id} key={index} className="w-full min-w-[230px] md:min-w-[320px] max-w-[280px]  md:max-w-[320px]  bg-white rounded-sm shadow-md">
+                                <div className="bg-white h-64 px-5 min-w-[120px] md:min-w-[145px] flex items-center justify-center ">
+                                    <img src={product.productImage[0]} className="object-scale-down  w-full hover:scale-110 transition-all mix-blend-multiply" alt={product.name} />
                                 </div>
                                 <div className='p-3 grid gap-3'>
                                     {/* Add product details here */}
