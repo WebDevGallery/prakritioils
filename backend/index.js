@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 80;
 connectDB().then(() => {
     app.listen(PORT, () => {
         console.log("Connected to DB");
-        console.log(`Server is listening on port ${PORT}`);
+        console.log(`Server is listening on port `+ PORT);
     });
 }).catch(err => {
     console.error("Failed to connect to DB:", err);
