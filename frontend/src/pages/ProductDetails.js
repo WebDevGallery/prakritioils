@@ -96,7 +96,7 @@ const ProductDetails = () => {
                 </div>
               )}
             </div>
-            <div className='h-32 '>
+            <div className='h-32'>
               {loading ? (
                 <div className='flex gap-2 lg:flex-col overflow-scroll scrollbar-none h-full'>
                   {productImageListLoading.map((_, index) => (
