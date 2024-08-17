@@ -76,22 +76,26 @@ const ProductDetails = () => {
 
   return (
     <div className='mx-1 p-3 flex flex-col'>
-      <div className='min-h-[200px] flex flex-col lg:flex-row gap-20'>
+      <div className='min-h-[200px] flex flex-col lg:flex-row gap-6 lg:gap-20'>
         <div className='flex lg:flex-row flex-col'>
-          <div className='h-96 w-full flex flex-col lg:flex-row-reverse gap-4'>
-            <div className='h-[500px] lg:h-96 lg:w-96 w-full p-3 relative'>
+          <div className='h-auto w-full flex flex-col lg:flex-row-reverse gap-4'>
+            <div className='relative h-[350px] sm:h-[400px] lg:h-96 w-full lg:w-96 p-3'>
               <img
                 src={activeImage}
-                className='h-full w-full sm:h-[80%] sm:w-[80%] my-5 object-scale-down mix-blend-multiply'
+                className='h-full w-full object-scale-down mix-blend-multiply'
                 onMouseMove={handleZoomImage}
                 onMouseLeave={handleZoomOutImage}
                 alt='Product'
               />
               {zoomImage && (
-                <div className='hidden lg:block absolute min-w-[500px] min-h-[500px] bg-white p-1 -right-[510px] top-0'>
+                <div className='hidden lg:block absolute min-w-[300px] min-h-[300px] lg:min-w-[500px] lg:min-h-[500px] bg-white p-1 -right-[310px] lg:-right-[510px] top-0'>
                   <div
-                    className='w-full h-full min-h-[500px] min-w-[500px] mix-blend-multiply scale-100 overflow-hidden'
-                    style={{ backgroundImage: `url(${activeImage})`, backgroundRepeat: 'no-repeat', backgroundPosition: `${zoomImagecord.x * 100}% ${zoomImagecord.y * 100}%` }}
+                    className='w-full h-full mix-blend-multiply scale-100 overflow-hidden'
+                    style={{
+                      backgroundImage: `url(${activeImage})`,
+                      backgroundRepeat: 'no-repeat',
+                      backgroundPosition: `${zoomImagecord.x * 100}% ${zoomImagecord.y * 100}%`
+                    }}
                   ></div>
                 </div>
               )}
@@ -100,13 +104,13 @@ const ProductDetails = () => {
               {loading ? (
                 <div className='flex gap-2 lg:flex-col overflow-scroll scrollbar-none h-full'>
                   {productImageListLoading.map((_, index) => (
-                    <div className='h-32 w-32 bg-slate-200 rounded animate-pulse' key={index}></div>
+                    <div className='h-20 w-20 sm:h-24 sm:w-24 lg:h-32 lg:w-32 bg-slate-200 rounded animate-pulse' key={index}></div>
                   ))}
                 </div>
               ) : (
                 <div className='flex gap-2 lg:flex-col overflow-scroll scrollbar-none h-full'>
                   {data.productImage.map((imgUrl, index) => (
-                    <div className='h-20 w-20 bg-white rounded p-1' key={imgUrl}>
+                    <div className='h-20 w-20 sm:h-24 sm:w-24 lg:h-32 lg:w-32 bg-white rounded p-1' key={imgUrl}>
                       <img
                         src={imgUrl}
                         className='w-full h-full object-scale-down mix-blend-multiply cursor-pointer'
@@ -121,24 +125,24 @@ const ProductDetails = () => {
           </div>
         </div>
         {loading ? (
-          <div className='grid gap-6'>
-            <p className='bg-slate-200 animate-pulse px-5 h-4 w-full rounded-full inline-block py-2 '></p>
-            <h2 className='text-2xl lg:text-4xl font-semibold h-6 bg-slate-200 animate-pulse'></h2>
+          <div className='grid gap-3 sm:gap-6'>
+            <p className='bg-slate-200 animate-pulse px-5 h-4 w-full rounded-full inline-block py-2'></p>
+            <h2 className='text-xl sm:text-2xl lg:text-4xl font-semibold h-6 bg-slate-200 animate-pulse'></h2>
             <p className='capitalize text-slate-500 bg-slate-200 min-w-[100px] animate-pulse h-6'></p>
             <div className='text-green-600 flex items-center gap-1 text-xl bg-slate-200 h-6 animate-pulse'></div>
-            <div className='flex items-center gap-2 text-2xl font-medium bg-slate-200 h-6 animate-pulse'></div>
-            <div className='flex items-center justify-center gap-3'>
-              <button className='h-6 bg-slate-200 animate-pulse w-full'></button>
-              <button className='h-6 bg-slate-200 animate-pulse w-full'></button>
+            <div className='flex items-center gap-2 text-xl sm:text-2xl font-medium bg-slate-200 h-6 animate-pulse'></div>
+            <div className='flex flex-col sm:flex-row items-center justify-center gap-3'>
+              <button className='h-6 bg-slate-200 animate-pulse w-full sm:w-auto'></button>
+              <button className='h-6 bg-slate-200 animate-pulse w-full sm:w-auto'></button>
             </div>
             <div>
-              <p className='h-52 bg-slate-200 animate-pulse w-96'></p>
+              <p className='h-32 sm:h-52 bg-slate-200 animate-pulse w-full sm:w-96'></p>
             </div>
           </div>
         ) : (
-          <div className='flex flex-col gap-5 px-5'>
+          <div className='flex flex-col gap-5 px-2 sm:px-5'>
             <p className='bg-green-200 text-red-600 px-2 rounded-full inline-block w-fit'>{data.brandName}</p>
-            <h2 className='text-2xl lg:text-4xl font-semibold'>{data.productName}</h2>
+            <h2 className='text-xl sm:text-2xl lg:text-4xl font-semibold'>{data.productName}</h2>
             <p className='capitalize text-slate-500'>{data.category}</p>
             <div className='text-green-600 flex items-center gap-1 text-xl'>
               <IoIosStar />
@@ -147,11 +151,11 @@ const ProductDetails = () => {
               <IoIosStar />
               <IoStarHalfOutline />
             </div>
-            <div className='flex items-center gap-2 text-2xl font-medium'>
+            <div className='flex items-center gap-2 text-xl sm:text-2xl font-medium'>
               <p className='text-green-600'>{displayINRCurrency(data.selling)}</p>
               <p className='text-slate-500 line-through'>{displayINRCurrency(data.price)}</p>
             </div>
-            <div className='flex items-center justify-center gap-3'>
+            <div className='flex flex-col sm:flex-row items-center justify-center gap-3'>
               <button className='border-2 border-green-600 rounded px-3 py-1 min-w-[100px] text-green-600 font-medium hover:bg-green-600 hover:text-white'>
                 Buy
               </button>
@@ -171,6 +175,7 @@ const ProductDetails = () => {
       )}
     </div>
   );
+  
 };
 
 export default ProductDetails;
