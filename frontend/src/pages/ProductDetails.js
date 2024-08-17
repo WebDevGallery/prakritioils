@@ -75,14 +75,14 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className='mx-1 p-3'>
+    <div className='mx-1 p-3 flex flex-col'>
       <div className='min-h-[200px] flex flex-col lg:flex-row gap-2'>
-        <div>
+        <div className='flex lg:flex-row flex-col'>
           <div className='h-96 w-full flex flex-col lg:flex-row-reverse gap-4'>
-            <div className='h-[500px] lg:h-96 lg:w-96 w-full bg-white p-3x relative'>
+            <div className='h-[500px] lg:h-96 lg:w-96 w-full p-3x relative'>
               <img
                 src={activeImage}
-                className='h-full w-full object-scale-down mix-blend-multiply'
+                className='h-full w-full sm:h-[80%] sm:w-[80%] my-5 object-scale-down mix-blend-multiply'
                 onMouseMove={handleZoomImage}
                 onMouseLeave={handleZoomOutImage}
                 alt='Product'
