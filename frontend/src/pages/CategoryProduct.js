@@ -122,11 +122,24 @@ const CategoryProduct = () => {
 
           {/* right side */}
           <div className='w-full mb-5'>
-            {loading && <p>Loading...</p>}
+            {loading && (
+              <div className='grid grid-cols-1 h-full gap-4 my-10 mx-3'>
+                {Array(1).fill(0).map((_, idx) => (
+                  <div key={idx} className='p-4 border rounded shadow-lg bg-white animate-pulse'>
+                    <div className='h-48 bg-gray-300 rounded mb-4'></div>
+                    <div className='h-10 bg-gray-300 rounded mb-2'></div>
+                    <div className='h-10 bg-gray-300 rounded mb-2'></div>
+                    <div className='h-10 bg-gray-300 rounded w-1/2'></div>
+                  </div>
+                ))}
+              </div>
+            )}
             {!loading && data.length === 0 && <p>No products found.</p>}
-            {data.length > 0 && !loading && <div className='mb-5'>
-              <VerticalProductCard data={data}  loading={loading} />
-            </div>  }
+            {data.length > 0 && !loading && (
+              <div className='mb-5'>
+                <VerticalProductCard data={data} loading={loading} />
+              </div>
+            )}
           </div>
         </div>
       </div>

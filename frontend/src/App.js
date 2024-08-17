@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 function App() {
   const dispatch = useDispatch();
   const [cartProductCount, setCartProductCount] = useState(0);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const fetchUserDetails = async () => {
     try {
@@ -29,11 +30,15 @@ function App() {
       if (dataApi.success) {
         dispatch(setUserDetails(dataApi.data));
       } else {
-        toast.error('Failed to fetch user details.');
+        if (!isFirstLoad) {
+          toast.error('Failed to fetch user details.');
+        }
       }
     } catch (error) {
       console.error('Error fetching user details:', error);
-      toast.error('Error fetching user details.');
+      if (!isFirstLoad) {
+        toast.error('Error fetching user details.');
+      }
     }
   };
 
@@ -50,17 +55,22 @@ function App() {
       if (dataApi.success && dataApi.data) {
         setCartProductCount(dataApi.data.count);
       } else {
-        toast.error('Failed to fetch cart count.');
+        if (!isFirstLoad) {
+          toast.error('Failed to fetch cart count.');
+        }
       }
     } catch (error) {
       console.error('Error fetching cart count:', error);
-      toast.error('Error fetching cart count.');
+      if (!isFirstLoad) {
+        toast.error('Error fetching cart count.');
+      }
     }
   };
 
   useEffect(() => {
     fetchUserDetails();
     fetchUserAddToCart();
+    setIsFirstLoad(false);
   }, []);
 
   const contextValue = useMemo(() => ({
@@ -72,7 +82,19 @@ function App() {
   return (
     <>
       <Context.Provider value={contextValue}>
-        <ToastContainer />
+        <ToastContainer 
+          position="top-center" 
+          autoClose={5000} 
+          hideProgressBar 
+          closeOnClick 
+          draggable 
+          pauseOnHover
+          toastStyle={{ 
+            maxWidth: '60%', 
+            margin: '0 auto', 
+            textAlign: 'center',
+          }}
+        />
         <Header />
         <main className='min-h-[calc(100vh-130px)]'>
           <Outlet />
