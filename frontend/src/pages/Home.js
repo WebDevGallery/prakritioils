@@ -3,10 +3,11 @@ import CategoryList from '../components/CategoryList'
 import BannerProduct from '../components/BannerProduct'
 import HorizontalCardProduct from '../components/HorizontalCardProduct'
 import VerticalCardProduct from '../components/VerticalCardProduct'
-
+import {Helmet} from "react-helmet";
 const Home = () => {
   return (
     <div>
+      
       <CategoryList/>
       <BannerProduct/>
       <HorizontalCardProduct category={"category1"} heading={"Enter your Category name here"}/>
@@ -17,5 +18,7 @@ const Home = () => {
     </div>
   )
 }
+
+
 
 export default Home

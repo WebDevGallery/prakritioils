@@ -11,8 +11,10 @@ import { useDispatch } from 'react-redux';
 import { setUserDetails } from './store/userSlice';
 import MobileView from './pages/MobileView';
 import { useMemo } from 'react';
+import { Helmet } from 'react-helmet';
 
-function App() {
+function App({title, description, keywords,author}) {
+  
   const dispatch = useDispatch();
   const [cartProductCount, setCartProductCount] = useState(0);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
@@ -80,7 +82,16 @@ function App() {
   }), [cartProductCount]);
 
   return (
+    
     <>
+    <Helmet>
+        <title>{title}</title>
+        <meta charset="UTF-8"/>
+        <meta name="description" content={description}/>
+        <meta name="keywords" content={keywords}/>
+        <meta name="author" content={author}/>
+        <link rel="canonical" href="https:www.prakritioils.com/" />
+    </Helmet>
       <Context.Provider value={contextValue}>
         <ToastContainer 
           position="top-center" 
@@ -105,5 +116,10 @@ function App() {
     </>
   );
 }
-
+App.defaultProps={
+  title : "PRAKRITIOILS-Shop Now",
+  description : "Freshness, Purity and Goodness in every drop and bite, Wood pressed oils, Spices, Desi Ghee, Stingless/Small bee honey, Wild bee Honey, Palm Jaggery, Cane Jaggery, Homemade Puliyogare Gojju, Healty Millets",
+  keywords : "Wood Pressed Oils, Oils, Spices, Ghee, Masala, Freshness, Jaggery, Healthy Millets",
+   author : "Bharath C"
+}
 export default App;
