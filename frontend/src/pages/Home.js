@@ -1,7 +1,8 @@
+// Home.js
 import React, { Suspense, lazy } from 'react';
 import { Helmet } from 'react-helmet';
+import SkeletonLoader from '../components/SkeletonLoader'; // Import the skeleton loader
 
-// Lazy load the components
 const CategoryList = lazy(() => import('../components/CategoryList'));
 const BannerProduct = lazy(() => import('../components/BannerProduct'));
 const HorizontalCardProduct = lazy(() => import('../components/HorizontalCardProduct'));
@@ -10,11 +11,7 @@ const VerticalCardProduct = lazy(() => import('../components/VerticalCardProduct
 const Home = () => {
   return (
     <div className=''>
-      <Helmet>
-        <title>Home | PRAKRITIOILS</title>
-      </Helmet>
-      
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<SkeletonLoader />}>
         <CategoryList />
         <BannerProduct />
         <HorizontalCardProduct category={"Oils"} heading={"Healthy Wood Pressed Oils"} />
