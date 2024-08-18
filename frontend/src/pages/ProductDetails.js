@@ -17,6 +17,8 @@ const ProductDetails = () => {
     fetchUserAddToCart();
   };
 
+  
+
   const [data, setData] = useState({
     productName: "",
     brandName: "",
@@ -26,6 +28,16 @@ const ProductDetails = () => {
     price: "",
     selling: ""
   });
+
+  const handleCheckout = () => {
+    const message = data.map(product => 
+      `${data.productName} - - ${displayINRCurrency(data.selling)}`
+    ).join('\n');
+
+    const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(`Checkout details:\n${message}\nTotal Price: ${displayINRCurrency(data.selling)}`)}`;
+    window.location.href = url;
+  };
+  
   const params = useParams();
   const [loading, setLoading] = useState(true);
   const productImageListLoading = new Array(4).fill(null);
@@ -156,7 +168,7 @@ const ProductDetails = () => {
               <p className='text-slate-500 line-through'>{displayINRCurrency(data.price)}</p>
             </div>
             <div className='flex flex-col sm:flex-row items-center justify-center gap-3'>
-              <button className='border-2 border-green-600 rounded px-3 py-1 min-w-[100px] text-green-600 font-medium hover:bg-green-600 hover:text-white'>
+              <button className='border-2 border-green-600 rounded px-3 py-1 min-w-[100px] text-green-600 font-medium hover:bg-green-600 hover:text-white' onClick={handleCheckout}>
                 Buy
               </button>
               <button className='border-2 border-green-600 rounded px-3 py-1 min-w-[100px] font-medium text-white bg-green-600 hover:text-green-600 hover:bg-white' onClick={(e) => handleAddToCart(e, data._id)}>
@@ -175,7 +187,6 @@ const ProductDetails = () => {
       )}
     </div>
   );
-  
 };
 
 export default ProductDetails;

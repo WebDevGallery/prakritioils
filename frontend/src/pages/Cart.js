@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
 import SummaryApi from '../common';
 import { toast } from 'react-toastify';
 import Context from '../context';
@@ -24,17 +24,16 @@ const Cart = () => {
         }
       });
 
-      const responseData = await response.json();
-
-      if (response.ok) {
-        if (responseData.success) {
-          setData(responseData.data);
-        } else {
-          setError(responseData.message);
-          toast.error(responseData.message);
-        }
-      } else {
+      if (!response.ok) {
+        const responseData = await response.json();
         throw new Error(responseData.message || 'Failed to fetch data');
+      }
+
+      const responseData = await response.json();
+      if (responseData.success) {
+        setData(responseData.data);
+      } else {
+        throw new Error(responseData.message);
       }
     } catch (err) {
       setError(err.message);
@@ -48,7 +47,7 @@ const Cart = () => {
     fetchData();
   }, [context.cartProductCount]);
 
-  const increaseQty = async (id, qty) => {
+  const updateQty = async (id, qty) => {
     try {
       const response = await fetch(SummaryApi.updateCartProduct.url, {
         method: SummaryApi.updateCartProduct.method,
@@ -56,14 +55,10 @@ const Cart = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          _id: id,
-          quantity: qty + 1
-        })
+        body: JSON.stringify({ _id: id, quantity: qty })
       });
 
       const responseData = await response.json();
-
       if (responseData.success) {
         fetchData();
       } else {
@@ -74,36 +69,10 @@ const Cart = () => {
     }
   };
 
-  const decreaseQty = async (id, qty) => {
-    if (qty > 1) {
-      try {
-        const response = await fetch(SummaryApi.updateCartProduct.url, {
-          method: SummaryApi.updateCartProduct.method,
-          credentials: 'include',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            _id: id,
-            quantity: qty - 1
-          })
-        });
+  const increaseQty = useCallback((id, qty) => updateQty(id, qty + 1), []);
+  const decreaseQty = useCallback((id, qty) => qty > 1 && updateQty(id, qty - 1), []);
 
-        const responseData = await response.json();
-
-        if (responseData.success) {
-          fetchData();
-        } else {
-          toast.error(responseData.message);
-        }
-
-      } catch (error) {
-        toast.error(error.message);
-      }
-    }
-  };
-
-  const deleteCartProduct = async(id)=>{
+  const deleteCartProduct = async (id) => {
     try {
       const response = await fetch(SummaryApi.deleteCartProduct.url, {
         method: SummaryApi.deleteCartProduct.method,
@@ -111,28 +80,34 @@ const Cart = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          _id: id,
-        })
+        body: JSON.stringify({ _id: id })
       });
 
       const responseData = await response.json();
-
       if (responseData.success) {
         fetchData();
-        context.fetchUserAddToCart()
-        toast.success(responseData.message)
+        context.fetchUserAddToCart();
+        toast.success(responseData.message);
       } else {
         toast.error(responseData.message);
       }
-
     } catch (error) {
       toast.error(error.message);
     }
-  }
+  };
 
-  const totalQty = data.reduce((previous,current)=>previous + current.quantity,0)
-  const totalPrice = data.reduce((preve,cur)=> preve + (cur.quantity * cur?.productId?.selling),0)
+  const handleCheckout = () => {
+    const message = data.map(product => 
+      `${product?.productId?.productName} - (${product?.quantity} * ${displayINRCurrency(product?.productId?.selling)}) - ${displayINRCurrency(product?.productId?.selling * product?.quantity)}`
+    ).join('\n');
+
+    const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(`Checkout details:\n${message}\nTotal Price: ${displayINRCurrency(totalPrice)}`)}`;
+    window.location.href = url;
+  };
+
+  const totalQty = data.reduce((previous, current) => previous + current.quantity, 0);
+  const totalPrice = data.reduce((preve, cur) => preve + (cur.quantity * cur?.productId?.selling), 0);
+
   return (
     <div className='m-5'>
       <div className='text-center text-lg'>
@@ -141,25 +116,26 @@ const Cart = () => {
         )}
       </div>
       <div className='flex flex-col lg:flex-row lg:gap-5 justify-between'>
-        <div className='w-full max-w-4xl '>
+        <div className='w-full max-w-4xl'>
           {loading ? (
-            loadingCart.map((el, index) => (
+            loadingCart.map((_, index) => (
               <div key={index} className='w-full bg-white h-32 border m-3 border-slate-300 animate-pulse rounded' />
             ))
           ) : (
             <div>
-              {data.map((product, index) => (
+              {data.map((product) => (
                 <div key={product?._id} className='w-full bg-white h-32 my-2 border border-slate-300 rounded grid grid-cols-[128px,1fr] relative'>
                   <div className='w-32 h-32 bg-slate-200'>
                     <img src={product?.productId?.productImage[0]} className='w-full h-full object-scale-down mix-blend-multiply' alt={product?.productId?.productName} />
                   </div>
                   <div className='px-4 py-2 relative'>
-
-
-                    <button className='absolute top-2 right-2 text-green-600 rounded-full p-2 hover:bg-green-600 hover:text-white cursor-pointer' onClick={()=>deleteCartProduct(product?._id)}>
+                    <button 
+                      className='absolute top-2 right-2 text-green-600 rounded-full p-2 hover:bg-green-600 hover:text-white cursor-pointer' 
+                      onClick={() => deleteCartProduct(product?._id)}
+                      aria-label={`Delete ${product?.productId?.productName}`}
+                    >
                       <MdDelete />
                     </button>
-
 
                     <h2 className='text-lg lg:text-xl text-ellipsis line-clamp-1'>{product?.productId?.productName}</h2>
                     <p className='capitalize text-slate-500'>{product?.productId?.category}</p>
@@ -168,9 +144,21 @@ const Cart = () => {
                       <p className='text-slate-600 font-semibold text-lg'>{displayINRCurrency(product?.productId?.selling * product?.quantity)}</p>
                     </div>
                     <div className='flex items-center gap-3 mt-1'>
-                      <button className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded' onClick={() => decreaseQty(product?._id, product?.quantity)}>-</button>
+                      <button 
+                        className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded' 
+                        aria-label={`Decrease quantity of ${product?.productId?.productName}`} 
+                        onClick={() => decreaseQty(product?._id, product?.quantity)}
+                      >
+                        -
+                      </button>
                       <span>{product?.quantity}</span>
-                      <button className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded' onClick={() => increaseQty(product?._id, product?.quantity)}>+</button>
+                      <button 
+                        className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded' 
+                        aria-label={`Increase quantity of ${product?.productId?.productName}`} 
+                        onClick={() => increaseQty(product?._id, product?.quantity)}
+                      >
+                        +
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -183,28 +171,35 @@ const Cart = () => {
           {loading ? (
             <div className='h-36 bg-white border-slate-300 animate-pulse' />
           ) : (
-            <div className='h-80 bg-white '>
+            <div className='h-80 bg-white'>
               <div className='m-3'>
-              <h1 className='text-white bg-green-600 px-4 py-1'>Summary</h1>
-              <div className='flex gap-4 text-lg font-medium text-slate-600'>
-                <p>No fo items :</p>
-                <p>{totalQty}</p>
-              </div>
-              <div className='mt-2'>
-              <p className='text-lg font-semibold'>Product Details:</p>
+                <h1 className='text-white bg-green-600 px-4 py-1'>Summary</h1>
+                <div className='flex gap-4 text-lg font-medium text-slate-600'>
+                  <p>No of items :</p>
+                  <p>{totalQty}</p>
+                </div>
+                <div className='mt-2'>
+                  <p className='text-lg font-semibold'>Product Details:</p>
                   {data.map((product) => (
                     <div key={product?._id} className='flex items-center gap-2 mb-1'>
                       <ul>
-                      <li className='ml-10 text-md font-medium'>{product?.productId?.productName} - ({product?.quantity} * {displayINRCurrency(product?.productId?.selling)}) - {displayINRCurrency(product?.productId?.selling * product?.quantity)}</li>
+                        <li className='ml-10 text-md font-medium'>
+                          {product?.productId?.productName} - ({product?.quantity} * {displayINRCurrency(product?.productId?.selling)}) - {displayINRCurrency(product?.productId?.selling * product?.quantity)}
+                        </li>
                       </ul>
                     </div>
                   ))}
                 </div>
-              <div className='flex gap-4 text-lg font-medium text-slate-600'>
-                <p>Total Price :</p>
-                <p>{displayINRCurrency(totalPrice)}</p>
-              </div>
-              <button className='bg-red-600  p-4 text-white w-full rounded'>CheckOut</button>
+                <div className='flex gap-4 text-lg font-medium text-slate-600'>
+                  <p>Total Price :</p>
+                  <p>{displayINRCurrency(totalPrice)}</p>
+                </div>
+                <button 
+                  className='bg-red-600 p-4 text-white w-full rounded' 
+                  onClick={handleCheckout}
+                >
+                  CheckOut
+                </button>
               </div>
             </div>
           )}

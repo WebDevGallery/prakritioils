@@ -1,24 +1,36 @@
-import React from 'react'
-import CategoryList from '../components/CategoryList'
-import BannerProduct from '../components/BannerProduct'
-import HorizontalCardProduct from '../components/HorizontalCardProduct'
-import VerticalCardProduct from '../components/VerticalCardProduct'
-import {Helmet} from "react-helmet";
+import React, { Suspense, lazy } from 'react';
+import { Helmet } from 'react-helmet';
+
+// Lazy load the components
+const CategoryList = lazy(() => import('../components/CategoryList'));
+const BannerProduct = lazy(() => import('../components/BannerProduct'));
+const HorizontalCardProduct = lazy(() => import('../components/HorizontalCardProduct'));
+const VerticalCardProduct = lazy(() => import('../components/VerticalCardProduct'));
+
 const Home = () => {
   return (
-    <div>
+    <div className=''>
+      <Helmet>
+        <title>Home | PRAKRITIOILS</title>
+      </Helmet>
       
-      <CategoryList/>
-      <BannerProduct/>
-      <HorizontalCardProduct category={"category1"} heading={"Enter your Category name here"}/>
-      <HorizontalCardProduct category={"category2"} heading={"Enter your Category name here"}/>
-      <VerticalCardProduct category={"category3"} heading={"Enter your Category name here"}/>
-      <VerticalCardProduct category={"category4"} heading={"Enter your Category name here"}/>
-      
+      <Suspense fallback={<div>Loading...</div>}>
+        <CategoryList />
+        <BannerProduct />
+        <HorizontalCardProduct category={"Oils"} heading={"Healthy Wood Pressed Oils"} />
+        <HorizontalCardProduct category={"Jaggery"} heading={"Try Out Jaggery"} />
+        <VerticalCardProduct category={"Spices"} heading={"Home Made Aromatic Spices"} />
+        <VerticalCardProduct category={"Home Made Powders"} heading={"Home Made Powders"} />
+        <HorizontalCardProduct category={"Snacks"} heading={"Try Out Some Healthy and Tasty Snacks"} />
+        <HorizontalCardProduct category={"Millets"} heading={"Try Out These Fresh Millets"} />
+        <VerticalCardProduct category={"Salt"} heading={"Salts"} />
+        <VerticalCardProduct category={"Pickles & Chutney"} heading={"Spice Up Your Life with Every Bite"} />
+        <HorizontalCardProduct category={"Honey"} heading={"Pure Sweetness from Nature's Nectar"} />
+        <HorizontalCardProduct category={"Aromatic Oils"} heading={"Essence of Tranquility in Every Drop"} />
+        <VerticalCardProduct category={"Ghee"} heading={"Pure Goodness, Rich Tradition"} />
+      </Suspense>
     </div>
-  )
+  );
 }
 
-
-
-export default Home
+export default Home;
