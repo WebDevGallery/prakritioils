@@ -1,36 +1,45 @@
-require('dotenv').config()
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
-const jwt = require('jsonwebtoken')
+async function authToken(req, res, next) {
+    try {
+        // Retrieve the token from cookies
+        const token = req.cookies?.token;
 
-async function authToken(req,res,next){
-    try{
-        const token = req.cookies?.token
-        if(!token){
-            return res.status(200).json({
-                message:"Please Login..!",
-                error:true,
-                success : false
-            })
+        if (!token) {
+            return res.status(401).json({
+                message: "Authentication required. Please login.",
+                error: true,
+                success: false,
+            });
         }
-        jwt.verify(token,process.env.TOKEN_SECRET_KEY,function(err, decoded){
-            console.log(err)
 
-            if(err){
-                console.log("error auth ",err)
+        // Verify the token
+        jwt.verify(token, process.env.TOKEN_SECRET_KEY, function(err, decoded) {
+            if (err) {
+                console.error("JWT verification error: ", err);
+                return res.status(403).json({
+                    message: "Invalid or expired token. Please login again.",
+                    error: true,
+                    success: false,
+                });
             }
-            req.userId = decoded._id
 
-            next()
+            // Set the user ID in the request object for further use
+            req.userId = decoded._id;
+
+            // Proceed to the next middleware
+            next();
         });
 
-        console.log("token   :   ",token)
-    }catch(err){
-        res.status(400).json({
-            message:err.message || err,
-            data:[],
-            error:true,
-            success:false
-        })
+    } catch (err) {
+        console.error("Error in authToken middleware: ", err);
+        res.status(500).json({
+            message: "Internal Server Error",
+            error: true,
+            success: false,
+        });
     }
 }
-module.exports = authToken
+
+module.exports = authToken;
