@@ -56,9 +56,9 @@ async function userSignInController(req, res) {
 
             // Set token in cookie
             const tokenOption = {
-                httpOnly: false,
-                secure: false, // Ensure HTTPS is used
-                sameSite: "Lax", // Required for cross-site cookies
+                httpOnly: true,
+                secure: true, // Ensure HTTPS is used
+                sameSite: "None", // Required for cross-site cookies
             };
             
 
