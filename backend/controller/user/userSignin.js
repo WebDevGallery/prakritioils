@@ -43,25 +43,49 @@ async function userSignInController(req, res) {
             });
         }
 
-        // Generate token
-        const tokenData = {
-            _id: user._id,
-            email: user.email,
-        };
-        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: '8h' });
+        // Determine auth type (default to 'jwt')
+        const authType = req.query.authType || "jwt";
 
-        // Set token in cookie
-        const tokenOption = {
-            httpOnly: true,
-            secure: true,
-            sameSite : "None"
-        };
+        // Option 1: Generate and set JWT token in cookie
+        if (authType === "jwt") {
+            const tokenData = {
+                _id: user._id,
+                email: user.email,
+            };
+            const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: '8h' });
 
-        res.cookie("token", token, tokenOption).status(200).json({
-            message: "Login successfully",
-            data: token,
-            success: true,
-            error: false,
+            // Set token in cookie
+            const tokenOption = {
+                httpOnly: true,
+                secure: true,
+                sameSite: "None"
+            };
+
+            return res.cookie("token", token, tokenOption).status(200).json({
+                message: "Login successfully",
+                data: token,
+                success: true,
+                error: false,
+            });
+        }
+
+        // Option 2: Store credentials in cookies (not recommended)
+        if (authType === "credentials") {
+            // Store email and password in cookies
+            res.cookie("email", email, { httpOnly: true, secure: true, sameSite: "None" });
+            res.cookie("password", password, { httpOnly: true, secure: true, sameSite: "None" });
+
+            return res.status(200).json({
+                message: "Login successfully",
+                success: true,
+                error: false,
+            });
+        }
+
+        return res.status(400).json({
+            message: "Invalid authType specified",
+            error: true,
+            success: false,
         });
 
     } catch (err) {
