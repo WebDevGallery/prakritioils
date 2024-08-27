@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const userModel = require('../../models/userModel');
 const jwt = require('jsonwebtoken');
+const cookie = require('cookie');
 
 async function userSignInController(req, res) {
     try {
@@ -46,7 +47,7 @@ async function userSignInController(req, res) {
         // Determine auth type (default to 'jwt')
         const authType = req.query.authType || "jwt";
 
-        // Option 1: Generate and set JWT token in cookie
+        // Option 1: Generate and set JWT token in cookie using cookie library
         if (authType === "jwt") {
             const tokenData = {
                 _id: user._id,
@@ -54,22 +55,18 @@ async function userSignInController(req, res) {
             };
             const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: '8h' });
 
-            // Set token in cookie
-            const tokenOption = {
+            const isProduction = process.env.NODE_ENV === 'production';
+
+            // Set the cookie using the `cookie` library
+            res.setHeader('Set-Cookie', cookie.serialize('token', token, {
                 httpOnly: true,
-                secure: true, // Ensure HTTPS is used
-                sameSite: "None", // Required for cross-site cookies
-                // Set to None and Secure for iOS compatibility
-            };
+                secure: isProduction, // Ensure secure flag is set only in production
+                sameSite: isProduction ? "None" : "Lax", // Use Lax in development for testing
+                maxAge: 8 * 60 * 60, // 8 hours
+                path: '/',
+            }));
 
-            // For testing, you might want to adjust SameSite
-            // const tokenOption = {
-            //     httpOnly: true,
-            //     secure: true,
-            //     sameSite: "Lax", // Consider changing this for testing
-            // };
-
-            return res.cookie("token", token, tokenOption).status(200).json({
+            return res.status(200).json({
                 message: "Login successfully",
                 data: token,
                 success: true,
@@ -80,8 +77,20 @@ async function userSignInController(req, res) {
         // Option 2: Store credentials in cookies (not recommended)
         if (authType === "credentials") {
             // Store email and password in cookies
-            res.cookie("email", email, { httpOnly: true, secure: true, sameSite: "None" });
-            res.cookie("password", password, { httpOnly: true, secure: true, sameSite: "None" });
+            res.setHeader('Set-Cookie', [
+                cookie.serialize('email', email, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "None",
+                    path: '/',
+                }),
+                cookie.serialize('password', password, {
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "None",
+                    path: '/',
+                }),
+            ]);
 
             return res.status(200).json({
                 message: "Login successfully",
