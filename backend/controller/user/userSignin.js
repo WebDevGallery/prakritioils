@@ -58,7 +58,8 @@ async function userSignInController(req, res) {
             const tokenOption = {
                 httpOnly: true,
                 secure: true, // Ensure HTTPS is used
-                sameSite: "Strict", // Required for cross-site cookies
+                sameSite: "none", // Required for cross-site cookies
+                
                 // Set to None and Secure for iOS compatibility
             };
 
