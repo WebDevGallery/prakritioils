@@ -59,8 +59,15 @@ async function userSignInController(req, res) {
                 httpOnly: true,
                 secure: true, // Ensure HTTPS is used
                 sameSite: "None", // Required for cross-site cookies
+                // Set to None and Secure for iOS compatibility
             };
-            
+
+            // For testing, you might want to adjust SameSite
+            // const tokenOption = {
+            //     httpOnly: true,
+            //     secure: true,
+            //     sameSite: "Lax", // Consider changing this for testing
+            // };
 
             return res.cookie("token", token, tokenOption).status(200).json({
                 message: "Login successfully",

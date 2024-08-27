@@ -6,11 +6,11 @@ import image4 from '../assets/banners/banner-1.jpg'
 import { FaAngleLeft } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa";
 
-import mobileimage1 from '../assets/banners/banner-1_mobile.jpg'
-import mobileimage2 from '../assets/banners/banner-1_mobile.jpg'
-import mobileimage3 from '../assets/banners/banner-1_mobile.jpg'
-import mobileimage4 from '../assets/banners/banner-1_mobile.jpg'
-import mobileimage5 from '../assets/banners/banner-1_mobile.jpg'
+import mobileimage1 from '../assets/banners/prak2.jpg'
+import mobileimage2 from '../assets/banners/prak3.jpg'
+import mobileimage3 from '../assets/banners/prak4.jpg'
+import mobileimage4 from '../assets/banners/prak5.jpg'
+import mobileimage5 from '../assets/banners/prak6.jpg'
 
 const BannerProduct = () => {
     const [currentImage,setCurrentImage] = useState(0)

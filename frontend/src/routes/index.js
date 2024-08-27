@@ -14,6 +14,7 @@ import CategoryListMobile from "../components/CategoryListMobile";
 import Cart from "../pages/Cart";
 import SearchProduct from "../pages/SearchProduct";
 import ResetPasswordForm from "../pages/ResetPasswordForm";
+import AboutUs from "../pages/AboutUs";
 
 const router = createBrowserRouter([
     {
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
             {
                 path : "reset-password",
                 element : <ResetPasswordForm/>
+            },
+            {
+                path : "about-us",
+                element:<AboutUs/>
             }
             
         ]
