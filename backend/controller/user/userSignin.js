@@ -1,7 +1,6 @@
 const bcrypt = require('bcryptjs');
 const userModel = require('../../models/userModel');
 const jwt = require('jsonwebtoken');
-const cookie = require('cookie');
 
 async function userSignInController(req, res) {
     try {
@@ -47,7 +46,7 @@ async function userSignInController(req, res) {
         // Determine auth type (default to 'jwt')
         const authType = req.query.authType || "jwt";
 
-        // Option 1: Generate and set JWT token in cookie using cookie library
+        // Option 1: Generate and set JWT token in cookie
         if (authType === "jwt") {
             const tokenData = {
                 _id: user._id,
@@ -55,18 +54,16 @@ async function userSignInController(req, res) {
             };
             const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: '8h' });
 
-            const isProduction = process.env.NODE_ENV === 'production';
-
-            // Set the cookie using the `cookie` library
-            res.setHeader('Set-Cookie', cookie.serialize('token', token, {
+            // Set token in cookie
+            const tokenOption = {
                 httpOnly: true,
-                secure: isProduction, // Ensure secure flag is set only in production
-                sameSite: isProduction ? "None" : "Lax", // Use Lax in development for testing
-                maxAge: 8 * 60 * 60, // 8 hours
-                path: '/',
-            }));
+                secure: true, // Ensure HTTPS is used
+                sameSite: "Strict", // Required for cross-site cookies
+                // Set to None and Secure for iOS compatibility
+            };
 
-            return res.status(200).json({
+
+            return res.cookie("token", token, tokenOption).status(200).json({
                 message: "Login successfully",
                 data: token,
                 success: true,
@@ -77,20 +74,8 @@ async function userSignInController(req, res) {
         // Option 2: Store credentials in cookies (not recommended)
         if (authType === "credentials") {
             // Store email and password in cookies
-            res.setHeader('Set-Cookie', [
-                cookie.serialize('email', email, {
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: "None",
-                    path: '/',
-                }),
-                cookie.serialize('password', password, {
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: "None",
-                    path: '/',
-                }),
-            ]);
+            res.cookie("email", email, { httpOnly: true, secure: true, sameSite: "None" });
+            res.cookie("password", password, { httpOnly: true, secure: true, sameSite: "None" });
 
             return res.status(200).json({
                 message: "Login successfully",
