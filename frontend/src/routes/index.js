@@ -15,6 +15,8 @@ import Cart from "../pages/Cart";
 import SearchProduct from "../pages/SearchProduct";
 import ResetPasswordForm from "../pages/ResetPasswordForm";
 import AboutUs from "../pages/AboutUs";
+import Cancel from "../pages/Cancel";
+import RefundShipping from "../pages/RefundShipping";
 
 const router = createBrowserRouter([
     {
@@ -82,6 +84,14 @@ const router = createBrowserRouter([
             {
                 path : "about-us",
                 element:<AboutUs/>
+            },
+            {
+                path : "cancellation",
+                element : <Cancel/>
+            },
+            {
+                path : "refund-shipping",
+                element: <RefundShipping/>
             }
             
         ]
