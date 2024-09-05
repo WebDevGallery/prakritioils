@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import image1 from '../assets/banners/banner-1.jpg'
-import image2 from '../assets/banners/banner-1.jpg'
-import image3 from '../assets/banners/banner-1.jpg'
-import image4 from '../assets/banners/banner-1.jpg'
+import image1 from '../assets/banners/desk/desk1.jpg'
+import image2 from '../assets/banners/desk/desk2.jpg'
+import image3 from '../assets/banners/desk/desk3.jpg'
+import image4 from '../assets/banners/desk/desk4.jpg'
+import image5 from '../assets/banners/desk/desk5.jpg'
+import image6 from '../assets/banners/desk/desk6.jpg'
 import { FaAngleLeft } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa";
 
@@ -10,7 +12,7 @@ import mobileimage1 from '../assets/banners/prak2.jpg'
 import mobileimage2 from '../assets/banners/prak3.jpg'
 import mobileimage3 from '../assets/banners/prak4.jpg'
 import mobileimage4 from '../assets/banners/prak5.jpg'
-import mobileimage5 from '../assets/banners/prak6.jpg'
+import mobileimage5 from '../assets/banners/prakOils.jpg'
 
 const BannerProduct = () => {
     const [currentImage,setCurrentImage] = useState(0)
@@ -19,7 +21,9 @@ const BannerProduct = () => {
         image1,
         image2,
         image3,
-        image4
+        image4,
+        image5,
+        image6
     ]
 
     const mobileImages = [
