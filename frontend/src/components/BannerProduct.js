@@ -60,8 +60,8 @@ const BannerProduct = () => {
     },[currentImage])
     
   return (
-    <div className=' container mx-auto px-7 '>
-        <div className='h-96 md:h-96 w-full bg-slate-200 rounded relative'>
+    <div className=' container mx-auto px-7  flex justify-center' >
+        <div className='h-96 md:h-[500px] w-[85%] bg-slate-200 rounded relative'>
             <div className=' absolute z-10 w-full h-full md:flex items-center hidden'>
                 <div className=' flex justify-between w-full text-3xl'>
 
