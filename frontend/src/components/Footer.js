@@ -6,7 +6,7 @@ import scrollToTop from '../helpers/scrollToTop';
 
 const Footer = () => {
   return (
-    <footer className="bg-green-500">
+    <footer className="bg-lime-500">
       <div className="mx-auto p-4">
         <div className="bg-green-50 shadow-lg rounded-lg">
           <div className="max-w-screen-xl px-4 sm:px-6 text-gray-800 sm:grid md:grid-cols-4 sm:grid-cols-2 mx-auto">
