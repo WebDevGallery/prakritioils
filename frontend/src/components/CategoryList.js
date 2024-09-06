@@ -28,12 +28,13 @@ const CategoryList = () => {
   }, []);
 
   return (
-    <div className='container mx-auto p-4'>
+    <div className='container mx-auto my-2 shadow-sm  rounded-xl '>
+      <h1 className='text-green-500 font-semibold text-2xl flex justify-center font-sans mb-2'>Categories</h1>
       <div className='flex items-center gap-4 justify-center overflow-scroll scrollbar-none'>
         {loading ? (
           categoryLoading.map((_, index) => (
             <div
-              className='h-16 w-16 md:h-24 md:w-24 border border-green-600 rounded-full overflow-hidden bg-white animate-pulse'
+              className='h-16 w-16 md:h-24 md:w-24 border border-green-600 rounded-lg overflow-hidden bg-white animate-pulse'
               key={"categoryLoading" + index}
             ></div>
           ))
@@ -41,10 +42,10 @@ const CategoryList = () => {
           categoryProduct.map((product, index) => (
             <Link
               to={`/product-category/?category=${encodeURIComponent(product?.category)}`}
-              className='cursor-pointer'
+              className='cursor-pointer rounded-lg'
               key={product?.category + index}
             >
-              <div className='w-16 h-16 md:w-24 md:h-24 rounded-full overflow-hidden bg-white flex items-center justify-center border border-green-600'>
+              <div className='w-16 h-16 md:w-24 md:h-24 overflow-hidden rounded-lg bg-white flex items-center justify-center border border-green-600'>
                 <img
                   src={product?.productImage[0]}
                   alt={product?.category}

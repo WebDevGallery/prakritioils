@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 
 app.use("/api", router);
 
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 8080;
 
 connectDB().then(() => {
     app.listen(PORT, () => {

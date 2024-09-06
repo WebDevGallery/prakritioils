@@ -17,8 +17,6 @@ const ProductDetails = () => {
     fetchUserAddToCart();
   };
 
-  
-
   const [data, setData] = useState({
     productName: "",
     brandName: "",
@@ -87,47 +85,45 @@ const ProductDetails = () => {
   };
 
   return (
-    <div className='mx-1 p-3 flex flex-col'>
-      <div className='min-h-[200px] flex flex-col lg:flex-row gap-6 lg:gap-20'>
-        <div className='flex lg:flex-row flex-col'>
-          <div className='h-auto w-full flex flex-col lg:flex-row-reverse gap-4'>
-            <div className='relative h-[350px] sm:h-[400px] lg:h-96 w-full lg:w-96 p-3'>
+    <div className="mx-1 p-3 flex flex-col bg-green-50">
+      <div className="min-h-[200px] flex flex-col lg:flex-row gap-6 lg:gap-20">
+        <div className="flex lg:flex-row flex-col">
+          <div className="h-auto w-full flex flex-col lg:flex-row-reverse gap-4">
+            <div className="relative h-[350px] sm:h-[400px] lg:h-96 w-full lg:w-96 p-3 bg-white rounded-xl shadow-md">
               <img
                 src={activeImage}
-                className='h-full w-full object-scale-down mix-blend-multiply'
-                onMouseMove={handleZoomImage}
-                onMouseLeave={handleZoomOutImage}
-                alt='Product'
+                className="h-full w-full object-scale-down mix-blend-multiply rounded-md"
+                alt="Product"
               />
               {zoomImage && (
-                <div className='hidden lg:block absolute min-w-[300px] min-h-[300px] lg:min-w-[500px] lg:min-h-[500px] bg-white p-1 -right-[310px] lg:-right-[510px] top-0'>
+                <div className="hidden lg:block absolute min-w-[300px] min-h-[300px] lg:min-w-[500px] lg:min-h-[500px] bg-white p-1 shadow-lg rounded-md -right-[310px] lg:-right-[510px] top-0">
                   <div
-                    className='w-full h-full mix-blend-multiply scale-100 overflow-hidden'
+                    className="w-full h-full mix-blend-multiply scale-100 overflow-hidden"
                     style={{
                       backgroundImage: `url(${activeImage})`,
-                      backgroundRepeat: 'no-repeat',
+                      backgroundRepeat: "no-repeat",
                       backgroundPosition: `${zoomImagecord.x * 100}% ${zoomImagecord.y * 100}%`
                     }}
                   ></div>
                 </div>
               )}
             </div>
-            <div className='h-32'>
+            <div className="h-32">
               {loading ? (
-                <div className='flex gap-2 lg:flex-col overflow-scroll scrollbar-none h-full'>
+                <div className="flex gap-2 lg:flex-col overflow-scroll scrollbar-none h-full">
                   {productImageListLoading.map((_, index) => (
-                    <div className='h-20 w-20 sm:h-24 sm:w-24 lg:h-32 lg:w-32 bg-slate-200 rounded animate-pulse' key={index}></div>
+                    <div className="h-20 w-20 sm:h-24 sm:w-24 lg:h-32 lg:w-32 bg-slate-200 rounded animate-pulse" key={index}></div>
                   ))}
                 </div>
               ) : (
-                <div className='flex gap-2 lg:flex-col overflow-scroll scrollbar-none h-full'>
+                <div className="flex gap-2 lg:flex-col overflow-scroll scrollbar-none h-full">
                   {data.productImage.map((imgUrl, index) => (
-                    <div className='h-20 w-20 sm:h-24 sm:w-24 lg:h-32 lg:w-32 bg-white rounded p-1' key={imgUrl}>
+                    <div className="h-20 w-20 sm:h-24 sm:w-24 lg:h-32 lg:w-32 bg-white rounded p-1 border-2 border-green-200" key={imgUrl}>
                       <img
                         src={imgUrl}
-                        className='w-full h-full object-scale-down mix-blend-multiply cursor-pointer'
+                        className="w-full h-full object-scale-down mix-blend-multiply cursor-pointer"
                         onMouseEnter={() => handleMouseEnterProduct(imgUrl)}
-                        alt='Product Thumbnail'
+                        alt="Product Thumbnail"
                       />
                     </div>
                   ))}
@@ -137,46 +133,46 @@ const ProductDetails = () => {
           </div>
         </div>
         {loading ? (
-          <div className='grid gap-3 sm:gap-6'>
-            <p className='bg-slate-200 animate-pulse px-5 h-4 w-full rounded-full inline-block py-2'></p>
-            <h2 className='text-xl sm:text-2xl lg:text-4xl font-semibold h-6 bg-slate-200 animate-pulse'></h2>
-            <p className='capitalize text-slate-500 bg-slate-200 min-w-[100px] animate-pulse h-6'></p>
-            <div className='text-green-600 flex items-center gap-1 text-xl bg-slate-200 h-6 animate-pulse'></div>
-            <div className='flex items-center gap-2 text-xl sm:text-2xl font-medium bg-slate-200 h-6 animate-pulse'></div>
-            <div className='flex flex-col sm:flex-row items-center justify-center gap-3'>
-              <button className='h-6 bg-slate-200 animate-pulse w-full sm:w-auto'></button>
-              <button className='h-6 bg-slate-200 animate-pulse w-full sm:w-auto'></button>
+          <div className="grid gap-3 sm:gap-6">
+            <p className="bg-slate-200 animate-pulse px-5 h-4 w-full rounded-full inline-block py-2"></p>
+            <h2 className="text-xl sm:text-2xl lg:text-4xl font-semibold h-6 bg-slate-200 animate-pulse"></h2>
+            <p className="capitalize text-slate-500 bg-slate-200 min-w-[100px] animate-pulse h-6"></p>
+            <div className="text-green-600 flex items-center gap-1 text-xl bg-slate-200 h-6 animate-pulse"></div>
+            <div className="flex items-center gap-2 text-xl sm:text-2xl font-medium bg-slate-200 h-6 animate-pulse"></div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button className="h-6 bg-slate-200 animate-pulse w-full sm:w-auto"></button>
+              <button className="h-6 bg-slate-200 animate-pulse w-full sm:w-auto"></button>
             </div>
             <div>
-              <p className='h-32 sm:h-52 bg-slate-200 animate-pulse w-full sm:w-96'></p>
+              <p className="h-32 sm:h-52 bg-slate-200 animate-pulse w-full sm:w-96"></p>
             </div>
           </div>
         ) : (
-          <div className='flex flex-col gap-5 px-2 sm:px-5'>
-            <p className='bg-green-200 text-red-600 px-2 rounded-full inline-block w-fit'>{data.brandName}</p>
-            <h2 className='text-xl sm:text-2xl lg:text-4xl font-semibold'>{data.productName}</h2>
-            <p className='capitalize text-slate-500'>{data.category}</p>
-            <div className='text-green-600 flex items-center gap-1 text-xl'>
+          <div className="flex flex-col gap-5 px-2 sm:px-5">
+            <p className="bg-green-200 text-green-800 px-2 rounded-full inline-block w-fit">{data.brandName}</p>
+            <h2 className="text-xl sm:text-2xl lg:text-4xl font-semibold text-green-900">{data.productName}</h2>
+            <p className="capitalize text-slate-500">{data.category}</p>
+            <div className="text-green-600 flex items-center gap-1 text-xl">
               <IoIosStar />
               <IoIosStar />
               <IoIosStar />
               <IoIosStar />
               <IoStarHalfOutline />
             </div>
-            <div className='flex items-center gap-2 text-xl sm:text-2xl font-medium'>
-              <p className='text-green-600'>{displayINRCurrency(data.selling)}</p>
-              <p className='text-slate-500 line-through'>{displayINRCurrency(data.price)}</p>
+            <div className="flex items-center gap-2 text-xl sm:text-2xl font-medium">
+              <p className="text-green-600">{displayINRCurrency(data.selling)}</p>
+              <p className="text-slate-500 line-through">{displayINRCurrency(data.price)}</p>
             </div>
-            <div className='flex flex-col sm:flex-row items-center justify-center gap-3'>
-              <button className='border-2 border-green-600 rounded px-3 py-1 min-w-[100px] text-green-600 font-medium hover:bg-green-600 hover:text-white' onClick={handleCheckout}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button className="border-2 border-green-600 rounded px-3 py-1 min-w-[100px] text-green-600 font-medium hover:bg-green-600 hover:text-white transition-colors" onClick={handleCheckout}>
                 Buy
               </button>
-              <button className='border-2 border-green-600 rounded px-3 py-1 min-w-[100px] font-medium text-white bg-green-600 hover:text-green-600 hover:bg-white' onClick={(e) => handleAddToCart(e, data._id)}>
+              <button className="border-2 border-green-600 rounded px-3 py-1 min-w-[100px] font-medium text-white bg-green-600 hover:text-green-600 hover:bg-white transition-colors" onClick={(e) => handleAddToCart(e, data._id)}>
                 Add To Cart
               </button>
             </div>
             <div>
-              <p className='text-slate-600 font-medium my-1'>Description:</p>
+              <p className="text-slate-600 font-medium my-1">Description:</p>
               <p>{data.description}</p>
             </div>
           </div>

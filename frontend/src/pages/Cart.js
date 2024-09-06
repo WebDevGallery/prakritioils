@@ -109,41 +109,43 @@ const Cart = () => {
   const totalPrice = data.reduce((preve, cur) => preve + (cur.quantity * cur?.productId?.selling), 0);
 
   return (
-    <div className='m-5'>
-      <div className='text-center text-lg'>
+    <div className='container mx-auto px-4 py-6 bg-green-50 rounded-lg shadow-md'>
+      <div className='text-center text-lg text-green-800 mb-6'>
         {data.length === 0 && !loading && (
           <p className='bg-white py-5'>No Data</p>
         )}
       </div>
+
       <div className='flex flex-col lg:flex-row lg:gap-5 justify-between'>
+        {/* Product List */}
         <div className='w-full max-w-4xl'>
           {loading ? (
             loadingCart.map((_, index) => (
-              <div key={index} className='w-full bg-white h-32 border m-3 border-slate-300 animate-pulse rounded' />
+              <div key={index} className='w-full bg-white h-32 border m-3 border-slate-300 animate-pulse rounded-lg' />
             ))
           ) : (
             <div>
               {data.map((product) => (
-                <div key={product?._id} className='w-full bg-white h-32 my-2 border border-slate-300 rounded grid grid-cols-[128px,1fr] relative'>
+                <div key={product?._id} className='w-full bg-white h-auto my-2 border border-slate-300 rounded-lg grid grid-cols-[128px,1fr] p-4 relative'>
                   <div className='w-32 h-32 bg-slate-200'>
-                    <img src={product?.productId?.productImage[0]} className='w-full h-full object-scale-down mix-blend-multiply' alt={product?.productId?.productName} />
+                    <img src={product?.productId?.productImage[0]} className='w-full h-full object-scale-down mix-blend-multiply rounded-md' alt={product?.productId?.productName} />
                   </div>
                   <div className='px-4 py-2 relative'>
                     <button 
-                      className='absolute top-2 right-2 text-green-600 rounded-full p-2 hover:bg-green-600 hover:text-white cursor-pointer' 
+                      className='absolute top-2 right-2 text-green-600 rounded-full p-2 hover:bg-green-600 hover:text-white transition-colors cursor-pointer' 
                       onClick={() => deleteCartProduct(product?._id)}
                       aria-label={`Delete ${product?.productId?.productName}`}
                     >
                       <MdDelete />
                     </button>
 
-                    <h2 className='text-lg lg:text-xl text-ellipsis line-clamp-1'>{product?.productId?.productName}</h2>
-                    <p className='capitalize text-slate-500'>{product?.productId?.category}</p>
+                    <h2 className='text-lg lg:text-xl text-ellipsis line-clamp-1 text-green-900'>{product?.productId?.productName}</h2>
+                    <p className='capitalize text-green-600'>{product?.productId?.category}</p>
                     <div className='flex items-center justify-between'>
                       <p className='text-green-600 font-medium text-lg'>{displayINRCurrency(product?.productId?.selling)}</p>
-                      <p className='text-slate-600 font-semibold text-lg'>{displayINRCurrency(product?.productId?.selling * product?.quantity)}</p>
+                      <p className='text-green-800 font-semibold text-lg'>{displayINRCurrency(product?.productId?.selling * product?.quantity)}</p>
                     </div>
-                    <div className='flex items-center gap-3 mt-1'>
+                    <div className='flex items-center gap-3 mt-2'>
                       <button 
                         className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded' 
                         aria-label={`Decrease quantity of ${product?.productId?.productName}`} 
@@ -166,36 +168,35 @@ const Cart = () => {
             </div>
           )}
         </div>
-        {/* total summary */}
+
+        {/* Summary Section */}
         <div className='m-3 w-full lg:mt-4 max-w-sm'>
           {loading ? (
-            <div className='h-36 bg-white border-slate-300 animate-pulse' />
+            <div className='h-36 bg-white border-slate-300 animate-pulse rounded-lg' />
           ) : (
-            <div className='h-80 bg-white'>
-              <div className='m-3'>
-                <h1 className='text-white bg-green-600 px-4 py-1'>Summary</h1>
-                <div className='flex gap-4 text-lg font-medium text-slate-600'>
+            <div className='h-auto bg-white rounded-lg shadow-lg p-4'>
+              <h1 className='text-white bg-green-600 px-4 py-2 rounded-t-lg text-center'>Summary</h1>
+              <div className='mt-4'>
+                <div className='flex justify-between text-lg font-medium text-green-800'>
                   <p>No of items :</p>
                   <p>{totalQty}</p>
                 </div>
-                <div className='mt-2'>
-                  <p className='text-lg font-semibold'>Product Details:</p>
+                <div className='mt-4'>
+                  <p className='text-lg font-semibold text-green-800'>Product Details:</p>
                   {data.map((product) => (
-                    <div key={product?._id} className='flex items-center gap-2 mb-1'>
-                      <ul>
-                        <li className='ml-10 text-md font-medium'>
-                          {product?.productId?.productName} - ({product?.quantity} * {displayINRCurrency(product?.productId?.selling)}) - {displayINRCurrency(product?.productId?.selling * product?.quantity)}
-                        </li>
-                      </ul>
+                    <div key={product?._id} className='mb-2'>
+                      <p className='text-md font-medium text-green-700'>
+                        {product?.productId?.productName} - ({product?.quantity} * {displayINRCurrency(product?.productId?.selling)}) - {displayINRCurrency(product?.productId?.selling * product?.quantity)}
+                      </p>
                     </div>
                   ))}
                 </div>
-                <div className='flex gap-4 text-lg font-medium text-slate-600'>
+                <div className='flex justify-between text-lg font-medium text-green-800'>
                   <p>Total Price :</p>
                   <p>{displayINRCurrency(totalPrice)}</p>
                 </div>
                 <button 
-                  className='bg-red-600 p-4 text-white w-full rounded' 
+                  className='bg-green-600 hover:bg-green-700 text-white p-4 mt-4 w-full rounded-lg transition-colors' 
                   onClick={handleCheckout}
                 >
                   CheckOut
