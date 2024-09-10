@@ -26,9 +26,9 @@ const MobileView = () => {
           </Link>
 
           {/* User Icon */}
-          <Link to={'/profile'}>
+          <div>
             <FaRegUser className="hover:text-green-700 transition-colors" />
-          </Link>
+          </div>
         </div>
       </div>
     </div>
