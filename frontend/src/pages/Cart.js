@@ -101,7 +101,7 @@ const Cart = () => {
       `${product?.productId?.productName} - (${product?.quantity} * ${displayINRCurrency(product?.productId?.selling)}) - ${displayINRCurrency(product?.productId?.selling * product?.quantity)}`
     ).join('\n');
 
-    const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(`Checkout details:\n${message}\nTotal Price: ${displayINRCurrency(totalPrice)}`)}`;
+    const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(`Hey I Saw These product on your website prakritioils.com\nCheckout details:\n${message}\nTotal Price: ${displayINRCurrency(totalPrice)}`)}`;
     window.location.href = url;
   };
 
