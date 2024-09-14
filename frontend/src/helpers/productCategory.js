@@ -53,6 +53,10 @@ const productCategory = [
         id: 11,
         label : "Aromatic Oils",
         value : "Aromatic Oils"
+    },{
+        id: 12,
+        label : "Malts",
+        value : "Malts"
     },
 ]
 

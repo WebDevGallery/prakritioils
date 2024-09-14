@@ -1,4 +1,4 @@
-const backendDomain =   'https://prakritioils-api.vercel.app' //'http://localhost:8080' ||
+const backendDomain =  'http://localhost:8080' || 'https://prakritioils-api.vercel.app' //
 const SummaryApi = {
     signUp : {
         url : `${backendDomain}/api/signup`,
@@ -71,6 +71,10 @@ const SummaryApi = {
     searchProduct :{
         url:`${backendDomain}/api/search`,
         method : "get"
+    },
+    deleteProduct: {
+        url: `${backendDomain}/api/delete-product`,
+        method: 'post',
     },
     filterProduct : {
         url: `${backendDomain}/api/filter-product`,
