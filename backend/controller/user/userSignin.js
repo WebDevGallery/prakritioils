@@ -54,19 +54,17 @@ async function userSignInController(req, res) {
             };
             const token = jwt.sign(tokenData, process.env.TOKEN_SECRET_KEY, { expiresIn: '8h' });
 
-            // Set token in cookie
-            const tokenOption = {
-                httpOnly: true,
-                secure: true, // Ensure HTTPS is used
-                sameSite: "none", // Required for cross-site cookies
-                
-                // Set to None and Secure for iOS compatibility
+            // Set token in cookie with Secure, HttpOnly, and SameSite=None
+            const tokenOptions = {
+                httpOnly: true,  // Prevents JavaScript access to the cookie (XSS protection)
+                secure: true,    // Ensures the cookie is only sent over HTTPS
+                sameSite: "None", // Required for cross-origin requests, especially for Safari
+                maxAge: 8 * 60 * 60 * 1000, // Cookie expiration (8 hours)
             };
 
-
-            return res.cookie("token", token, tokenOption).status(200).json({
+            // Send the JWT token in a cookie and return a successful response
+            return res.cookie("token", token, tokenOptions).status(200).json({
                 message: "Login successfully",
-                data: token,
                 success: true,
                 error: false,
             });
@@ -93,7 +91,7 @@ async function userSignInController(req, res) {
 
     } catch (err) {
         console.error("Error in userSignInController:", err); // Log error to the console
-        res.status(500).json({
+        return res.status(500).json({
             message: err.message || "Internal Server Error",
             error: true,
             success: false,

@@ -12,18 +12,32 @@ app.use(cors({
     origin: process.env.FRONTEND_URL, // Allow requests from your frontend domain
     credentials: true, // Allow cookies to be sent with requests
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Specify allowed methods
 }));
 
 app.use(express.json()); // Parse JSON bodies
 app.use(cookieParser()); // Parse cookies
 
-// Secure headers middleware for cookies (SameSite=None for cross-site)
+// Middleware to handle setting SameSite=None for cookies
 app.use((req, res, next) => {
+    // This will ensure that all cookies have the SameSite=None and Secure flags
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+
+    // Ensure cookies are set with SameSite=None and Secure attributes
+    res.cookie('yourCookieName', 'cookieValue', {
+        httpOnly: true,       // Prevents XSS attacks
+        secure: true,         // Ensures cookies are only sent over HTTPS
+        sameSite: 'None',     // Allows cross-site cookies
+    });
+
+    // Handle preflight OPTIONS request
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    
     next();
 });
 
