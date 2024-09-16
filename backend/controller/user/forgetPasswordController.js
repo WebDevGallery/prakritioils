@@ -44,7 +44,7 @@ const forgetPasswordController = async (req, res) => {
 
     const mailOptions = {
       to: user.email,
-      from: process.env.EMAIL_USER,
+      from: "prakritiwoodpressed@gmail.com",
       subject: 'Password Reset',
       text: `You are receiving this because you (or someone else) have requested to reset the password for your account.\n\n` +
             `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
