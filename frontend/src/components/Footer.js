@@ -17,7 +17,8 @@ const Footer = () => {
                 </h3>
               </Link>
               <p className="text-green-700 font-semibold mt-4">
-                FSSAI Certified
+                FSSAI Certified <br/>
+                FSSAI NO: #11223334001297
               </p>
               <p className="text-green-700 font-semibold">
                 100% Natural Wood Pressed Oils

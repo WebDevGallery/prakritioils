@@ -90,6 +90,9 @@ const SummaryApi = {
     },deleteProduct: {
         url: `${backendDomain}/api/delete-product`,
         method: 'post',
+    },searchFilterProducts: {
+        url: `${backendDomain}/api/search-filter-products`,
+        method: 'get',
     },
 }
 

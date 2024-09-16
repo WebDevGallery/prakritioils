@@ -23,6 +23,7 @@ const filterProductController = require('../controller/product/filterProduct');
 const forgetPasswordController = require('../controller/user/forgetPasswordController');
 const resetPasswordController = require('../controller/user/resetPasswordController');
 const deleteProductController = require('../controller/product/deleteProduct');
+const searchAndFilterProductController = require('../controller/product/searchAndFilterProduct');
 
 
 router.post("/signup",userSignUpController)
@@ -57,6 +58,7 @@ router.post("/delete-cart-product",authToken, deleteAddToCart)
 
 
 router.post("/delete-product",  deleteProductController);
+router.get("/search-filter-products", searchAndFilterProductController);
 
 
 

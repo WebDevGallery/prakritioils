@@ -25,7 +25,7 @@ const VerticalProductCard = ({loading,data = []}) => {
                 : data.map((product, index) => {
                     return (
                         <Link to={"/product/"+product?._id} key={index} className="w-full min-w-[230px] md:min-w-[320px] max-w-[320px]  md:max-w-[320px] h-full bg-white rounded-sm shadow-md" onClick={scrollToTop()}>
-                            <div className="bg-white h-64 p-4 min-w-[120px] md:min-w-[145px] flex items-center justify-center ">
+                            <div className="bg-sky-300 h-64 p-4 min-w-[120px] md:min-w-[145px] flex items-center justify-center ">
                                 <img src={product?.productImage[0]} className="object-scale-down h-full hover:scale-110 transition-all mix-blend-multiply" alt={product.name} />
                             </div>
                             <div className='p-3 grid gap-3'>

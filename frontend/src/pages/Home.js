@@ -36,7 +36,7 @@ const Home = () => {
         imageSrc={imagesrc}
         imageAlt="Beautiful Nature"
         heading="Explore the Pureness of Natural Wood pressed Oils"
-        description="Wood pressed oils are extracted using traditional wooden mills, preserving their natural nutrients, flavor, and aroma. These oils are free from chemicals and retain a rich, authentic taste, making them a healthier choice for cooking."
+        description="Wood pressed oils are extracted using traditional wooden mills, preserving their natural nutrients, flavour, and aroma. These oils are free from chemicals and retain a rich, authentic taste, making them a healthier choice for cooking."
         category ='Oils'
         catdis='Healthy Wood Pressed Oils'
       />
@@ -58,7 +58,7 @@ const Home = () => {
         imageSrc={imagesrc3}
         imageAlt="Beautiful Nature"
         heading="Aromatic Spices"
-        description="Our Aromatic spices are rich in flavor and fragrance, adding depth and warmth to culinary dishes. These spices not only enhance taste but also offer numerous health benefits through their natural medicinal properties."
+        description="Our Aromatic spices are rich in flavour and fragrance, adding depth and warmth to culinary dishes. These spices not only enhance taste but also offer numerous health benefits through their natural medicinal properties."
         category ='Spices'
         catdis=''
       />
@@ -69,11 +69,12 @@ const Home = () => {
         imageSrc={imagesrc4}
         imageAlt="Honeycomb"
         heading="Pure Honey"
-        description="Natural sweetener produced by bees from flower nectar, known for its golden color and rich, smooth texture. Packed with antioxidants and antibacterial properties, honey offers numerous health benefits and enhances the flavor of various foods."
+        description="Natural sweetener produced by bees from flower nectar, known for its golden colour and rich, smooth texture. Packed with antioxidants and antibacterial properties, honey offers numerous health benefits and enhances the flavour of various foods."
         category ="Honey"
         catdis="Pure Sweetness from Nature's Nectar"
       />
         <HorizontalCardProduct category={"Aromatic Oils"} heading={"Essence of Tranquility in Every Drop"} />
+        <VerticalCardProduct category={"Malts"} heading={"Discover rich, toasted malts for a nutty and sweet flavour experience."} />
         
       </Suspense>
       
