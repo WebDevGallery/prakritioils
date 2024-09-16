@@ -71,7 +71,7 @@ const VerticalCardProduct = ({ category, heading }) => {
                         : data.map((product, index) => {
                             return (
                                 <Link to={"product/" + product?._id} key={index} className="border-green-500 border-2  rounded-2xl w-full min-w-[230px] md:min-w-[320px] max-w-[280px] md:max-w-[320px] shadow-md group">
-                                    <div className="bg-sky-200 h-64 border-2 rounded-2xl  px-5 min-w-[120px] md:min-w-[145px] flex items-center justify-center">
+                                    <div className="bg-white h-64 border-2 rounded-2xl  px-5 min-w-[120px] md:min-w-[145px] flex items-center justify-center">
                                         <img src={product.productImage[0]} className="object-contain h-full w-full hover:scale-110 transition-all" alt={product.name} />
                                     </div>
                                     <div className='p-3 grid gap-3 relative bg-lime-400 rounded-lg'>

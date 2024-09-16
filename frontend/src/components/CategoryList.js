@@ -34,7 +34,7 @@ const CategoryList = () => {
         {loading ? (
           categoryLoading.map((_, index) => (
             <div
-              className='h-16 w-16 md:h-24 md:w-24 border border-green-600 rounded-lg overflow-hidden bg-white animate-pulse'
+              className='h-16 w-16 md:h-24 md:w-24 border border-green-600 rounded-lg overflow-hidden bg-sky-200 animate-pulse'
               key={"categoryLoading" + index}
             ></div>
           ))
