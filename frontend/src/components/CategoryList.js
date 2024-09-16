@@ -52,9 +52,9 @@ const CategoryList = () => {
                   className='object-cover mix-blend-multiply h-full scale-125 hover:scale-[260px] transition-all'
                 />
               </div>
-              <p className='text-center text-sm md:text-base capitalize'>
-                {product?.category}
-              </p>
+              <p className="text-center text-sm md:text-base capitalize truncate" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100px' }}>
+  {product?.category}
+</p>
             </Link>
           ))
         )}
