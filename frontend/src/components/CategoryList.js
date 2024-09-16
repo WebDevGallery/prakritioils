@@ -45,7 +45,7 @@ const CategoryList = () => {
               className='cursor-pointer rounded-lg'
               key={product?.category + index}
             >
-              <div className='w-16 h-16 md:w-24 md:h-24 overflow-hidden rounded-lg bg-white flex items-center justify-center border border-green-600'>
+              <div className='w-16 h-16 md:w-24 md:h-24 overflow-hidden rounded-lg bg-sky-200 flex items-center justify-center border border-green-600'>
                 <img
                   src={product?.productImage[0]}
                   alt={product?.category}
