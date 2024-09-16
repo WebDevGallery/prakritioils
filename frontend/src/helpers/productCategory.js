@@ -31,8 +31,8 @@ const productCategory = [
     },
     {
         id: 7,
-        label : "Home Made Powders",
-        value : "Home Made Powders"
+        label : "Powders",
+        value : "Powders"
     },
     {
         id: 8,
@@ -57,6 +57,14 @@ const productCategory = [
         id: 12,
         label : "Malts",
         value : "Malts"
+    },{
+        id: 13,
+        label : "Pulses",
+        value : "Pulses"
+    },{
+        id: 14,
+        label : "Rice",
+        value : "Rice"
     },
 ]
 
