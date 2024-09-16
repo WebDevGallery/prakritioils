@@ -46,10 +46,10 @@ const CategoryWiseProductDisplay = ({ category, heading }) => {
                                 className="w-full h-full bg-white rounded-lg shadow-md transition-transform transform hover:scale-105"
                                 onClick={scrollToTop()}
                             >
-                                <div className="bg-white h-64 p-4 flex items-center justify-center rounded-t-lg">
+                                <div className="bg-blue-200 h-64 p-4 flex items-center justify-center rounded-t-lg">
                                     <img
                                         src={product.productImage[0]}
-                                        className="object-contain h-full hover:scale-110 transition-transform mix-blend-multiply"
+                                        className="object-contain h-full hover:scale-110 transition-transform "
                                         alt={product.name}
                                     />
                                 </div>

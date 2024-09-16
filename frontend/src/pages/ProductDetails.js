@@ -92,7 +92,7 @@ const ProductDetails = () => {
             <div className="relative h-[350px] sm:h-[400px] lg:h-96 w-full lg:w-96 p-3 bg-white rounded-xl shadow-md">
               <img
                 src={activeImage}
-                className="h-full w-full object-scale-down mix-blend-multiply rounded-md"
+                className="h-full w-full object-scale-down  rounded-md"
                 alt="Product"
               />
               {zoomImage && (
