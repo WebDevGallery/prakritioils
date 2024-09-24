@@ -1,3 +1,4 @@
+// frontend/src/components/Header.js
 import React, { useContext, useState, useEffect } from 'react';
 import Logo from './Logo';
 import { FaSearch, FaCartPlus } from "react-icons/fa";
@@ -14,7 +15,7 @@ const Header = () => {
   const user = useSelector(state => state?.user?.user);
   const dispatch = useDispatch();
   const [menuDisplay, setMenuDisplay] = useState(false);
-  const { cartProductCount } = useContext(Context);
+  const { cartProductCount, fetchUserAddToCart } = useContext(Context);
   const navigate = useNavigate();
   const searchInput = useLocation();
   const URLSearch = new URLSearchParams(searchInput?.search?.split("=")[0]);
@@ -39,6 +40,7 @@ const Header = () => {
       if (data.success) {
         toast.success(data.message);
         dispatch(setUserDetails(null));
+        fetchUserAddToCart(); // Update cart count after logout
       } else {
         toast.error(data.message);
       }
@@ -65,7 +67,7 @@ const Header = () => {
             <Logo />
           </Link>
         </div>
-        
+
         {/* Rounded Search Bar */}
         <div className="hidden lg:flex items-center w-full justify-between max-w-lg h-[50px] border border-green-300 rounded-full bg-white shadow-sm">
           <input
@@ -79,17 +81,15 @@ const Header = () => {
             <FaSearch />
           </div>
         </div>
-        
+
         {/* Right Side Icons */}
         <div className="flex gap-10 pr-10 justify-between items-center">
-          {user?._id && (
-            <Link to="/my-cart" className="relative hidden md:flex items-center">
-              <FaCartPlus className="text-3xl text-green-900 cursor-pointer hover:text-green-700 transition-colors" />
-              <div className="absolute -top-1 -right-1 w-5 h-5 flex justify-center items-center rounded-full bg-red-600">
-                <p className="text-white text-xs">{cartProductCount}</p>
-              </div>
-            </Link>
-          )}
+          <Link to="/my-cart" className="relative hidden md:flex items-center">
+            <FaCartPlus className="text-3xl text-green-900 cursor-pointer hover:text-green-700 transition-colors" />
+            <div className="absolute -top-1 -right-1 w-5 h-5 flex justify-center items-center rounded-full bg-red-600">
+              <p className="text-white text-xs">{cartProductCount}</p>
+            </div>
+          </Link>
 
           {/* User Menu */}
           <div className="relative group flex justify-center items-center">

@@ -42,6 +42,7 @@ const Login = () => {
 
       if (responseData.success) {
         toast.success(responseData.message);
+        await mergeCarts();  // Merge local cart with server cart
         navigate('/');
         fetchUserDetails();
         fetchUserAddToCart();
@@ -51,6 +52,36 @@ const Login = () => {
     } catch (error) {
       toast.error(error.message);
     }
+  };
+
+  // Function to merge local cart with server cart after login
+  const mergeCarts = async () => {
+    const localCart = JSON.parse(localStorage.getItem('cartItems')) || [];
+    if (localCart.length === 0) return; // No items to merge
+
+    for (const item of localCart) {
+      try {
+        const response = await fetch(SummaryApi.addToCart.url, {
+          method: SummaryApi.addToCart.method,
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ productId: item.productId, quantity: item.quantity })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          console.error(`Failed to add product ${item.productId} to cart: ${data.message}`);
+        }
+      } catch (error) {
+        console.error(`Error adding product ${item.productId} to cart: ${error.message}`);
+      }
+    }
+
+    // Clear local cart after merging
+    localStorage.removeItem('cartItems');
   };
 
   return (

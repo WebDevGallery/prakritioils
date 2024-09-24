@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import productCategory from '../helpers/productCategory';
 import VerticalProductCard from '../components/VerticalProductCard';
 import SummaryApi from '../common';
 import displayINRCurrency from '../helpers/displayCurrency';
+import addToCart from '../helpers/addToCart';
+import { useSelector } from 'react-redux';
+import Context from '../context';
+import { toast } from 'react-toastify';
 
 const CategoryProduct = () => {
   const params = useParams();
@@ -21,6 +25,9 @@ const CategoryProduct = () => {
   const [loading, setLoading] = useState(false);
   const [selectCategory, setSelectCategory] = useState(urlCategoryListObject);
   const [filterCategoryList, setFilterCategoryList] = useState(urlCategoryListArray);
+
+  const { fetchUserAddToCart, setCartProductCount } = useContext(Context);
+  const user = useSelector((state) => state?.user?.user);  // Get user info from Redux store
 
   const fetchData = async () => {
     setLoading(true);
@@ -41,7 +48,6 @@ const CategoryProduct = () => {
 
       const dataResponse = await response.json();
       setData(dataResponse?.data || []);
-      console.log(dataResponse);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -55,6 +61,49 @@ const CategoryProduct = () => {
       ...prev,
       [value]: checked,
     }));
+  };
+
+  const handleAddToCart = async (e, productId) => {
+    e.preventDefault();
+
+    if (user?._id) {
+      // User is logged in, add to cart via API
+      try {
+        const response = await fetch(SummaryApi.addToCart.url, {
+          method: SummaryApi.addToCart.method,
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ productId }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          toast.success('Product added to cart');
+          fetchUserAddToCart();
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error('Error adding product to cart');
+        console.error('Error:', error);
+      }
+    } else {
+      // User is not logged in, add to localStorage
+      const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+      const existingItem = cartItems.find((item) => item.productId === productId);
+
+      if (existingItem) {
+        toast.error('Already exists in Cart');
+        return;
+      }
+
+      cartItems.push({ productId, quantity: 1 });
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      setCartProductCount(cartItems.length);  // Update cart count
+      toast.success('Product added to cart');
+    }
   };
 
   useEffect(() => {
@@ -149,6 +198,12 @@ const CategoryProduct = () => {
                       <p className="text-red-600 font-semibold">{displayINRCurrency(product.selling)}</p>
                       <p className="text-gray-500 line-through">{displayINRCurrency(product.price) }</p>
                     </div>
+                    <button
+                      className="text-sm bg-green-600 py-1 text-white rounded-full hover:bg-green-700 mt-3"
+                      onClick={(e) => handleAddToCart(e, product?._id)}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
                 </div>
               ))}

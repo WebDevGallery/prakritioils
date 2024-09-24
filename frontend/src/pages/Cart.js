@@ -1,112 +1,189 @@
+// frontend/src/pages/Cart.js
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import SummaryApi from '../common';
 import { toast } from 'react-toastify';
 import Context from '../context';
 import displayINRCurrency from '../helpers/displayCurrency';
 import { MdDelete } from "react-icons/md";
+import { useSelector } from 'react-redux';
 
 const Cart = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
   const context = useContext(Context);
+  const user = useSelector(state => state?.user?.user);
   const loadingCart = new Array(context.cartProductCount).fill(null);
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    try {
-      const response = await fetch(SummaryApi.myCart.url, {
-        method: SummaryApi.myCart.method,
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
+    if (user?._id) {
+      // User is logged in, fetch cart from backend
+      try {
+        const response = await fetch(SummaryApi.myCart.url, {
+          method: SummaryApi.myCart.method,
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          const responseData = await response.json();
+          throw new Error(responseData.message || 'Failed to fetch data');
         }
-      });
 
-      if (!response.ok) {
         const responseData = await response.json();
-        throw new Error(responseData.message || 'Failed to fetch data');
+        if (responseData.success) {
+          setData(responseData.data);
+        } else {
+          throw new Error(responseData.message);
+        }
+      } catch (err) {
+        setError(err.message);
+        toast.error(err.message);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // User is not logged in, get cart from localStorage
+      const localCart = JSON.parse(localStorage.getItem('cartItems')) || [];
+      if (localCart.length === 0) {
+        setData([]);
+        setLoading(false);
+        return;
       }
 
-      const responseData = await response.json();
-      if (responseData.success) {
-        setData(responseData.data);
-      } else {
-        throw new Error(responseData.message);
+      // Fetch product details for items in localCart
+      try {
+        const productIds = localCart.map(item => item.productId);
+        const response = await fetch(SummaryApi.getProductsByIds.url, {
+          method: SummaryApi.getProductsByIds.method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ productIds })
+        });
+
+        if (!response.ok) {
+          const responseData = await response.json();
+          throw new Error(responseData.message || 'Failed to fetch products');
+        }
+
+        const responseData = await response.json();
+        if (responseData.success) {
+          const products = responseData.data;
+          // Merge quantity from localCart
+          const cartItems = localCart.map(item => {
+            const product = products.find(p => p._id === item.productId);
+            return {
+              _id: item.productId,
+              productId: product,
+              quantity: item.quantity
+            };
+          });
+          setData(cartItems);
+        } else {
+          throw new Error(responseData.message);
+        }
+      } catch (err) {
+        setError(err.message);
+        toast.error(err.message);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-  }, [context.cartProductCount]);
+  }, [context.cartProductCount, user?._id]);
 
   const updateQty = async (id, qty) => {
-    try {
-      const response = await fetch(SummaryApi.updateCartProduct.url, {
-        method: SummaryApi.updateCartProduct.method,
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ _id: id, quantity: qty })
-      });
+    if (user?._id) {
+      // Update quantity in backend
+      try {
+        const response = await fetch(SummaryApi.updateCartProduct.url, {
+          method: SummaryApi.updateCartProduct.method,
+          credentials: 'include',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ _id: id, quantity: qty })
+        });
 
-      const responseData = await response.json();
-      if (responseData.success) {
-        fetchData();
-      } else {
-        toast.error(responseData.message);
+        const responseData = await response.json();
+        if (responseData.success) {
+          fetchData();
+        } else {
+          toast.error(responseData.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
       }
-    } catch (error) {
-      toast.error(error.message);
+    } else {
+      // Update quantity in localStorage
+      const localCart = JSON.parse(localStorage.getItem('cartItems')) || [];
+      const index = localCart.findIndex(item => item.productId === id);
+      if (index !== -1) {
+        localCart[index].quantity = qty;
+        localStorage.setItem('cartItems', JSON.stringify(localCart));
+        fetchData();
+        context.setCartProductCount(localCart.length);
+      }
     }
   };
 
-  const increaseQty = useCallback((id, qty) => updateQty(id, qty + 1), []);
-  const decreaseQty = useCallback((id, qty) => qty > 1 && updateQty(id, qty - 1), []);
+  const increaseQty = useCallback((id, qty) => updateQty(id, qty + 1), [user?._id]);
+  const decreaseQty = useCallback((id, qty) => qty > 1 && updateQty(id, qty - 1), [user?._id]);
 
   const deleteCartProduct = async (id) => {
-    try {
-      const response = await fetch(SummaryApi.deleteCartProduct.url, {
-        method: SummaryApi.deleteCartProduct.method,
-        credentials: 'include',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ _id: id })
-      });
+    if (user?._id) {
+      // Delete from backend cart
+      try {
+        const response = await fetch(SummaryApi.deleteCartProduct.url, {
+          method: SummaryApi.deleteCartProduct.method,
+          credentials: 'include',
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ _id: id })
+        });
 
-      const responseData = await response.json();
-      if (responseData.success) {
-        fetchData();
-        context.fetchUserAddToCart();
-        toast.success(responseData.message);
-      } else {
-        toast.error(responseData.message);
+        const responseData = await response.json();
+        if (responseData.success) {
+          fetchData();
+          context.fetchUserAddToCart();
+          toast.success(responseData.message);
+        } else {
+          toast.error(responseData.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
       }
-    } catch (error) {
-      toast.error(error.message);
+    } else {
+      // Delete from localStorage cart
+      let localCart = JSON.parse(localStorage.getItem('cartItems')) || [];
+      localCart = localCart.filter(item => item.productId !== id);
+      localStorage.setItem('cartItems', JSON.stringify(localCart));
+      fetchData();
+      context.setCartProductCount(localCart.length);
     }
   };
 
   const handleCheckout = () => {
-    const message = data.map(product => 
+    const message = data.map(product =>
       `${product?.productId?.productName} - (${product?.quantity} * ${displayINRCurrency(product?.productId?.selling)}) - ${displayINRCurrency(product?.productId?.selling * product?.quantity)}`
     ).join('\n');
 
-    const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(`Hey I Saw These products on your website prakritioils.com and want to CheckOut\nCheckout details:\n${message}\nTotal Price: ${displayINRCurrency(totalPrice)}`)}`;
+    const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(`Hey I saw these products on your website prakritioils.com and want to check out.\nCheckout details:\n${message}\nTotal Price: ${displayINRCurrency(totalPrice)}`)}`;
     window.location.href = url;
   };
 
   const totalQty = data.reduce((previous, current) => previous + current.quantity, 0);
-  const totalPrice = data.reduce((preve, cur) => preve + (cur.quantity * cur?.productId?.selling), 0);
+  const totalPrice = data.reduce((prev, cur) => prev + (cur.quantity * cur?.productId?.selling), 0);
 
   return (
     <div className='container mx-auto px-4 py-6 bg-green-50 rounded-lg shadow-md'>
@@ -126,14 +203,14 @@ const Cart = () => {
           ) : (
             <div>
               {data.map((product) => (
-                <div key={product?._id} className='w-full bg-white h-auto my-2 border border-slate-300 rounded-lg grid grid-cols-[128px,1fr] p-4 relative'>
+                <div key={product?.productId?._id} className='w-full bg-white h-auto my-2 border border-slate-300 rounded-lg grid grid-cols-[128px,1fr] p-4 relative'>
                   <div className='w-32 h-32 bg-slate-200'>
                     <img src={product?.productId?.productImage[0]} className='w-full h-full object-scale-down mix-blend-multiply rounded-md' alt={product?.productId?.productName} />
                   </div>
                   <div className='px-4 py-2 relative'>
-                    <button 
-                      className='absolute top-2 right-2 text-green-600 rounded-full p-2 hover:bg-green-600 hover:text-white transition-colors cursor-pointer' 
-                      onClick={() => deleteCartProduct(product?._id)}
+                    <button
+                      className='absolute top-2 right-2 text-green-600 rounded-full p-2 hover:bg-green-600 hover:text-white transition-colors cursor-pointer'
+                      onClick={() => deleteCartProduct(product._id)}
                       aria-label={`Delete ${product?.productId?.productName}`}
                     >
                       <MdDelete />
@@ -146,18 +223,18 @@ const Cart = () => {
                       <p className='text-green-800 font-semibold text-lg'>{displayINRCurrency(product?.productId?.selling * product?.quantity)}</p>
                     </div>
                     <div className='flex items-center gap-3 mt-2'>
-                      <button 
-                        className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded' 
-                        aria-label={`Decrease quantity of ${product?.productId?.productName}`} 
-                        onClick={() => decreaseQty(product?._id, product?.quantity)}
+                      <button
+                        className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded'
+                        aria-label={`Decrease quantity of ${product?.productId?.productName}`}
+                        onClick={() => decreaseQty(product._id, product?.quantity)}
                       >
                         -
                       </button>
                       <span>{product?.quantity}</span>
-                      <button 
-                        className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded' 
-                        aria-label={`Increase quantity of ${product?.productId?.productName}`} 
-                        onClick={() => increaseQty(product?._id, product?.quantity)}
+                      <button
+                        className='border border-green-600 text-green-600 hover:bg-green-600 hover:text-white w-6 h-6 flex justify-center items-center rounded'
+                        aria-label={`Increase quantity of ${product?.productId?.productName}`}
+                        onClick={() => increaseQty(product._id, product?.quantity)}
                       >
                         +
                       </button>
@@ -184,7 +261,7 @@ const Cart = () => {
                 <div className='mt-4'>
                   <p className='text-lg font-semibold text-green-800'>Product Details:</p>
                   {data.map((product) => (
-                    <div key={product?._id} className='mb-2'>
+                    <div key={product?.productId?._id} className='mb-2'>
                       <p className='text-md font-medium text-green-700'>
                         {product?.productId?.productName} - ({product?.quantity} * {displayINRCurrency(product?.productId?.selling)}) - {displayINRCurrency(product?.productId?.selling * product?.quantity)}
                       </p>
@@ -195,8 +272,8 @@ const Cart = () => {
                   <p>Total Price :</p>
                   <p>{displayINRCurrency(totalPrice)}</p>
                 </div>
-                <button 
-                  className='bg-green-600 hover:bg-green-700 text-white p-4 mt-4 w-full rounded-lg transition-colors' 
+                <button
+                  className='bg-green-600 hover:bg-green-700 text-white p-4 mt-4 w-full rounded-lg transition-colors'
                   onClick={handleCheckout}
                 >
                   CheckOut
