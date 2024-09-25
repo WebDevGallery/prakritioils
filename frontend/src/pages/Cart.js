@@ -1,4 +1,3 @@
-// frontend/src/pages/Cart.js
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import SummaryApi from '../common';
 import { toast } from 'react-toastify';
@@ -6,6 +5,8 @@ import Context from '../context';
 import displayINRCurrency from '../helpers/displayCurrency';
 import { MdDelete } from "react-icons/md";
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+ // Import useHistory
 
 const Cart = () => {
   const [data, setData] = useState([]);
@@ -14,14 +15,19 @@ const Cart = () => {
 
   const context = useContext(Context);
   const user = useSelector(state => state?.user?.user);
+  const navigate = useNavigate();
+  // Initialize useHistory
+
+  // Check cart product count directly from context
   const loadingCart = new Array(context.cartProductCount).fill(null);
 
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    if (user?._id) {
-      // User is logged in, fetch cart from backend
-      try {
+    
+    try {
+      if (user?._id) {
+        // User is logged in, fetch cart from backend
         const response = await fetch(SummaryApi.myCart.url, {
           method: SummaryApi.myCart.method,
           credentials: 'include',
@@ -41,23 +47,15 @@ const Cart = () => {
         } else {
           throw new Error(responseData.message);
         }
-      } catch (err) {
-        setError(err.message);
-        toast.error(err.message);
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      // User is not logged in, get cart from localStorage
-      const localCart = JSON.parse(localStorage.getItem('cartItems')) || [];
-      if (localCart.length === 0) {
-        setData([]);
-        setLoading(false);
-        return;
-      }
+      } else {
+        // User is not logged in, get cart from localStorage
+        const localCart = JSON.parse(localStorage.getItem('cartItems')) || [];
+        if (localCart.length === 0) {
+          setData([]);
+          return;
+        }
 
-      // Fetch product details for items in localCart
-      try {
+        // Fetch product details for items in localCart
         const productIds = localCart.map(item => item.productId);
         const response = await fetch(SummaryApi.getProductsByIds.url, {
           method: SummaryApi.getProductsByIds.method,
@@ -88,12 +86,12 @@ const Cart = () => {
         } else {
           throw new Error(responseData.message);
         }
-      } catch (err) {
-        setError(err.message);
-        toast.error(err.message);
-      } finally {
-        setLoading(false);
       }
+    } catch (err) {
+      setError(err.message);
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,8 +134,8 @@ const Cart = () => {
     }
   };
 
-  const increaseQty = useCallback((id, qty) => updateQty(id, qty + 1), [user?._id]);
-  const decreaseQty = useCallback((id, qty) => qty > 1 && updateQty(id, qty - 1), [user?._id]);
+  const increaseQty = useCallback((id, qty) => updateQty(id, qty + 1), []);
+  const decreaseQty = useCallback((id, qty) => qty > 1 && updateQty(id, qty - 1), []);
 
   const deleteCartProduct = async (id) => {
     if (user?._id) {
@@ -174,11 +172,22 @@ const Cart = () => {
   };
 
   const handleCheckout = () => {
+    if (!user?._id) {
+      // User is not logged in, redirect to login page
+      toast.warn("Please log in to proceed with checkout.");
+      navigate('/login'); // Redirect to login page
+      return;
+    }
+
+    // Proceed with checkout if user is logged in
     const message = data.map(product =>
       `${product?.productId?.productName} - (${product?.quantity} * ${displayINRCurrency(product?.productId?.selling)}) - ${displayINRCurrency(product?.productId?.selling * product?.quantity)}`
     ).join('\n');
 
+    const totalPrice = data.reduce((prev, cur) => prev + (cur.quantity * cur?.productId?.selling), 0);
+    
     const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(`Hey I saw these products on your website prakritioils.com and want to check out.\nCheckout details:\n${message}\nTotal Price: ${displayINRCurrency(totalPrice)}`)}`;
+    
     window.location.href = url;
   };
 
@@ -218,8 +227,8 @@ const Cart = () => {
 
                     <h2 className='text-lg lg:text-xl text-ellipsis line-clamp-1 text-green-900'>{product?.productId?.productName}</h2>
                     <p className='capitalize text-green-600'>{product?.productId?.category}</p>
-                    <div className='flex items-center justify-between'>
-                      <p className='text-green-600 font-medium text-lg'>{displayINRCurrency(product?.productId?.selling)}</p>
+                    <div className='flex justify-between mt-4'>
+                      <p className='font-medium text-lg'>{displayINRCurrency(product?.productId?.selling)}</p>
                       <p className='text-green-800 font-semibold text-lg'>{displayINRCurrency(product?.productId?.selling * product?.quantity)}</p>
                     </div>
                     <div className='flex items-center gap-3 mt-2'>

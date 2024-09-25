@@ -1,4 +1,3 @@
-// frontend/src/components/Header.js
 import React, { useContext, useState, useEffect } from 'react';
 import Logo from './Logo';
 import { FaSearch, FaCartPlus } from "react-icons/fa";
@@ -15,7 +14,7 @@ const Header = () => {
   const user = useSelector(state => state?.user?.user);
   const dispatch = useDispatch();
   const [menuDisplay, setMenuDisplay] = useState(false);
-  const { cartProductCount, fetchUserAddToCart } = useContext(Context);
+  const { cartProductCount } = useContext(Context);
   const navigate = useNavigate();
   const searchInput = useLocation();
   const URLSearch = new URLSearchParams(searchInput?.search?.split("=")[0]);
@@ -23,6 +22,7 @@ const Header = () => {
   const [search, setSearch] = useState(searchQuery);
 
   useEffect(() => {
+    // Close menu if user is not logged in
     if (!user?._id) {
       setMenuDisplay(false);
     }
@@ -39,8 +39,8 @@ const Header = () => {
 
       if (data.success) {
         toast.success(data.message);
-        dispatch(setUserDetails(null));
-        fetchUserAddToCart(); // Update cart count after logout
+        dispatch(setUserDetails(null)); // Clear user data from Redux
+        navigate('/'); // Redirect to home or login page after logout
       } else {
         toast.error(data.message);
       }
@@ -55,7 +55,7 @@ const Header = () => {
     if (value) {
       navigate(`/search?q=${value}`);
     } else {
-      navigate("search");
+      navigate("/search");
     }
   };
 
@@ -84,17 +84,23 @@ const Header = () => {
 
         {/* Right Side Icons */}
         <div className="flex gap-10 pr-10 justify-between items-center">
-          <Link to="/my-cart" className="relative hidden md:flex items-center">
-            <FaCartPlus className="text-3xl text-green-900 cursor-pointer hover:text-green-700 transition-colors" />
-            <div className="absolute -top-1 -right-1 w-5 h-5 flex justify-center items-center rounded-full bg-red-600">
-              <p className="text-white text-xs">{cartProductCount}</p>
-            </div>
+          {/* Cart Icon */}
+          <Link to="/my-cart" className="relative flex items-center">
+            <FaCartPlus className="hidden md:flex text-3xl text-green-900 cursor-pointer hover:text-green-700 transition-colors" />
+            {cartProductCount > 0 && (
+              <div className="absolute -top-1 -right-1 w-5 h-5 flex justify-center items-center rounded-full bg-red-600">
+                <p className="text-white text-xs">{cartProductCount}</p>
+              </div>
+            )}
           </Link>
 
           {/* User Menu */}
           <div className="relative group flex justify-center items-center">
             {user?._id && (
-              <div className="hidden sm:block text-3xl text-green-900 cursor-pointer hover:text-green-700 transition-colors" onClick={() => setMenuDisplay(prev => !prev)}>
+              <div
+                className="hidden sm:block text-3xl text-green-900 cursor-pointer hover:text-green-700 transition-colors"
+                onClick={() => setMenuDisplay(prev => !prev)}
+              >
                 <LuUserCircle />
               </div>
             )}
@@ -110,6 +116,14 @@ const Header = () => {
                       Admin Panel
                     </Link>
                   )}
+                  {/* User Dashboard */}
+                  <Link
+                    to="/dashboard" // Link to user dashboard
+                    className="block p-2 text-green-900 hover:bg-green-200 rounded-md"
+                    onClick={() => setMenuDisplay(false)}
+                  >
+                    Dashboard
+                  </Link>
                 </nav>
               </div>
             )}
@@ -117,13 +131,14 @@ const Header = () => {
 
           {/* Login / Logout Button */}
           <div>
-            {user?._id ? (
-              <button
-                onClick={handleLogout}
-                className="font-semibold text-green-900 hover:text-green-700 transition-colors"
-              >
-                Logout
-              </button>
+  {user?._id ? (
+    <button
+      onClick={handleLogout}
+      className="font-semibold text-green-900 hover:text-green-700 transition-colors px-3 py-1.5 text-base"
+      // Adjusted padding to px-3 py-1.5 and text size to text-base
+    >
+      Logout
+    </button>
             ) : (
               <Link
                 to="/login"

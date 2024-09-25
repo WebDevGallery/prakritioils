@@ -118,6 +118,7 @@ const Login = () => {
                   placeholder='Enter Password'
                   className='w-full h-full bg-transparent outline-none'
                 />
+               
                 <div
                   className='cursor-pointer text-xl'
                   onClick={() => setShowPassword((prev) => !prev)}
@@ -148,6 +149,7 @@ const Login = () => {
         </div>
       </div>
     </section>
+
   );
 };
 
