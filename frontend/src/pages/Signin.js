@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import SummaryApi from '../common';
 import { toast } from 'react-toastify';
+
+const statesInIndia = [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+    "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+    "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+    "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+    "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+    "Uttar Pradesh", "Uttarakhand", "West Bengal"
+];
 
 const Signin = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -10,15 +19,37 @@ const Signin = () => {
         name: "",
         email: "",
         password: "",
-        confirm_password: ""
+        confirm_password: "",
+        address: {
+            street: "",
+            city: "",
+            state: "",
+            postalCode: "",
+            country: "India" // Fixed to India
+        }
     });
+
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const handleOnChange = (e) => {
         const { name, value } = e.target;
-        setData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+
+        // Handle address fields separately
+        if (name.startsWith('address.')) {
+            const fieldName = name.split('.')[1]; // Get the field name after 'address.'
+            setData(prev => ({
+                ...prev,
+                address: {
+                    ...prev.address,
+                    [fieldName]: value
+                }
+            }));
+        } else {
+            setData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -38,7 +69,8 @@ const Signin = () => {
                 body: JSON.stringify({
                     name: data.name,
                     email: data.email,
-                    password: data.password
+                    password: data.password,
+                    address: data.address // Include address in the payload
                 })
             });
 
@@ -46,6 +78,7 @@ const Signin = () => {
 
             if (response.ok) {
                 toast.success("User created successfully");
+                navigate('/login'); // Redirect to the login page
             } else {
                 toast.error(dataApi.message || "Something went wrong");
             }
@@ -125,6 +158,79 @@ const Signin = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Address Fields */}
+                        <div className='grid'>
+                            <label>Street:</label>
+                            <div className='bg-slate-100 p-2'>
+                                <input
+                                    type='text'
+                                    placeholder='Enter your street'
+                                    name='address.street'
+                                    value={data.address.street}
+                                    onChange={handleOnChange}
+                                    required
+                                    className='w-full h-full bg-transparent outline-none'
+                                />
+                            </div>
+                        </div>
+                        <div className='grid'>
+                            <label>City:</label>
+                            <div className='bg-slate-100 p-2'>
+                                <input
+                                    type='text'
+                                    placeholder='Enter your city'
+                                    name='address.city'
+                                    value={data.address.city}
+                                    onChange={handleOnChange}
+                                    required
+                                    className='w-full h-full bg-transparent outline-none'
+                                />
+                            </div>
+                        </div>
+                        <div className='grid'>
+                            <label>State:</label>
+                            <div className='bg-slate-100 p-2'>
+                                <select
+                                    name='address.state'
+                                    value={data.address.state}
+                                    onChange={handleOnChange}
+                                    required
+                                    className='w-full h-full bg-transparent outline-none'
+                                >
+                                    <option value=''>Select State</option>
+                                    {statesInIndia.map((state, index) => (
+                                        <option key={index} value={state}>{state}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className='grid'>
+                            <label>Postal Code:</label>
+                            <div className='bg-slate-100 p-2'>
+                                <input
+                                    type='text'
+                                    placeholder='Enter postal code'
+                                    name='address.postalCode'
+                                    value={data.address.postalCode}
+                                    onChange={handleOnChange}
+                                    required
+                                    className='w-full h-full bg-transparent outline-none'
+                                />
+                            </div>
+                        </div>
+                        <div className='grid'>
+                            <label>Country:</label>
+                            <div className='bg-slate-100 p-2'>
+                                <input
+                                    type='text'
+                                    value={data.address.country}
+                                    readOnly
+                                    className='w-full h-full bg-transparent outline-none'
+                                />
+                            </div>
+                        </div>
+
                         <button className='bg-green-600 text-white rounded px-6 py-2 w-full max-w-[150px] mt-5 hover:scale-110 transition-all mx-auto block'>
                             Sign Up
                         </button>
