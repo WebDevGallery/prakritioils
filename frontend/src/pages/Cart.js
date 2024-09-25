@@ -173,23 +173,29 @@ const Cart = () => {
 
   const handleCheckout = () => {
     if (!user?._id) {
-      // User is not logged in, redirect to login page
-      toast.warn("Please log in to proceed with checkout.");
-      navigate('/login'); // Redirect to login page
-      return;
+        // User is not logged in, redirect to login page
+        toast.warn("Please log in to proceed with checkout.");
+        navigate('/login'); // Redirect to login page
+        return;
     }
 
     // Proceed with checkout if user is logged in
     const message = data.map(product =>
-      `${product?.productId?.productName} - (${product?.quantity} * ${displayINRCurrency(product?.productId?.selling)}) - ${displayINRCurrency(product?.productId?.selling * product?.quantity)}`
+        `${product?.productId?.productName} - (${product?.quantity} * ${displayINRCurrency(product?.productId?.selling)}) - ${displayINRCurrency(product?.productId?.selling * product?.quantity)}`
     ).join('\n');
 
     const totalPrice = data.reduce((prev, cur) => prev + (cur.quantity * cur?.productId?.selling), 0);
-    
-    const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(`Hey I saw these products on your website prakritioils.com and want to check out.\nCheckout details:\n${message}\nTotal Price: ${displayINRCurrency(totalPrice)}`)}`;
-    
+
+    // Add user's email to the WhatsApp message
+    const emailMessage = user?.email ? `\nUser Email: ${user.email}` : '';
+
+    const url = `https://api.whatsapp.com/send?phone=918951936369&text=${encodeURIComponent(
+        `Hey, I saw these products on your website prakritioils.com and want to check out\n${emailMessage}.\nCheckout details:\n${message}\nTotal Price: ${displayINRCurrency(totalPrice)}`
+    )}`;
+
     window.location.href = url;
-  };
+};
+
 
   const totalQty = data.reduce((previous, current) => previous + current.quantity, 0);
   const totalPrice = data.reduce((prev, cur) => prev + (cur.quantity * cur?.productId?.selling), 0);
