@@ -88,8 +88,8 @@ const Header = () => {
           <Link to="/my-cart" className="relative flex items-center">
             <FaCartPlus className="hidden md:flex text-3xl text-green-900 cursor-pointer hover:text-green-700 transition-colors" />
             {cartProductCount > 0 && (
-              <div className="absolute -top-1 -right-1 w-5 h-5 flex justify-center items-center rounded-full bg-red-600">
-                <p className="text-white text-xs">{cartProductCount}</p>
+              <div className="absolute -top-1 -right-1 w-5 h-5  justify-center items-center rounded-full bg-red-600 hidden md:flex">
+                <p className="text-white text-xs ">{cartProductCount}</p>
               </div>
             )}
           </Link>
