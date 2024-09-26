@@ -165,7 +165,7 @@ const Signin = () => {
                             <div className='bg-slate-100 p-2'>
                                 <input
                                     type='text'
-                                    placeholder='Enter your street'
+                                    placeholder='Enter your full Address'
                                     name='address.street'
                                     value={data.address.street}
                                     onChange={handleOnChange}
